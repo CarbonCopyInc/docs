@@ -24,12 +24,12 @@
    CSS Custom Properties — Dark Mode
    ============================================ */
 .dark, [data-theme="dark"] {
-  --cc-bg: #1E2030;
+  --cc-bg: #141518;
   --cc-fg: #E8E6E0;
-  --cc-card: #262838;
-  --cc-border: #3A3D52;
+  --cc-card: #1C1C20;
+  --cc-border: #2E2E34;
   --cc-muted: #9B9DA8;
-  --cc-muted-bg: #2E3044;
+  --cc-muted-bg: #222226;
   --cc-primary: #4a7ab5;
   --cc-primary-fg: #FCFAF4;
 }
