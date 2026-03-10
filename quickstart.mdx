@@ -16,7 +16,7 @@ This guide walks you through:
 
 ## Step 1 — Create an account
 
-Head to [carboncopy.news](https://carboncopy.news) and sign in with your Privy wallet or email. Once authenticated, connect your Polymarket wallet under **Settings → Wallet**.
+Head to [carboncopy.inc](https://carboncopy.inc) and sign in with your email. Once authenticated, connect your Polymarket wallet under **Settings → Wallet**.
 
 ---
 
@@ -30,21 +30,6 @@ Configure the scopes you need — for a read-only monitoring bot, `portfolio:rea
   The key secret (`cc_<64 hex chars>`) is shown **exactly once** at creation time. Copy it to your password manager or secrets store immediately.
 </Note>
 
-You can also create keys via the API itself (requires a Privy JWT):
-
-```bash
-curl -X POST https://carboncopy.news/api/v1/keys \
-  -H "Authorization: Bearer <your-privy-jwt>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "monitoring-bot",
-    "scopes": {
-      "portfolio": "read",
-      "traders": "read"
-    }
-  }'
-```
-
 ---
 
 ## Step 3 — Make your first request
@@ -52,7 +37,7 @@ curl -X POST https://carboncopy.news/api/v1/keys \
 Verify the API is reachable (no auth required):
 
 ```bash
-curl https://carboncopy.news/api/v1/health
+curl https://carboncopy.inc/api/v1/health
 ```
 
 ```json
@@ -68,7 +53,7 @@ Now fetch your portfolio summary using your new key:
 ```bash
 export CC_API_KEY="cc_your_key_here"
 
-curl https://carboncopy.news/api/v1/portfolio \
+curl https://carboncopy.inc/api/v1/portfolio \
   -H "Authorization: Bearer $CC_API_KEY"
 ```
 
@@ -91,7 +76,7 @@ curl https://carboncopy.news/api/v1/portfolio \
 To start copying a wallet, your key needs `traders:write` scope:
 
 ```bash
-curl -X POST https://carboncopy.news/api/v1/traders \
+curl -X POST https://carboncopy.inc/api/v1/traders \
   -H "Authorization: Bearer $CC_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -110,7 +95,7 @@ This will copy 25% of every trade by `0xAbCd1234...`, up to a maximum of $500 US
 Poll open positions to track what's currently deployed:
 
 ```bash
-curl "https://carboncopy.news/api/v1/portfolio/positions?limit=20" \
+curl "https://carboncopy.inc/api/v1/portfolio/positions?limit=20" \
   -H "Authorization: Bearer $CC_API_KEY"
 ```
 
@@ -122,7 +107,7 @@ See [Pagination](/pagination) for iterating beyond the first page.
 
 <CardGroup cols={2}>
   <Card title="Authentication" icon="shield-halved" href="/authentication">
-    Learn about scopes and Privy JWT auth.
+    Learn about API key scopes and security.
   </Card>
   <Card title="API Reference" icon="code" href="/api-reference/introduction">
     Full interactive endpoint documentation.

@@ -46,12 +46,33 @@
   --cc-muted: oklch(0.65 0.01 80);
   --cc-muted-bg: oklch(0.24 0.012 250);
 
-  /* Lighter navy for dark mode */
+  /* Lighter navy for dark mode — NOT green */
   --cc-primary: oklch(0.55 0.1 250);
   --cc-primary-fg: oklch(0.98 0.005 85);
 
   /* Warm destructive */
   --cc-destructive: oklch(0.6 0.18 25);
+}
+
+/* Force dark mode primary/accent to navy, override Mintlify's green */
+.dark a,
+.dark .eyebrow,
+.dark [data-theme="dark"] a,
+[data-theme="dark"] a {
+  color: var(--cc-primary);
+}
+
+.dark .eyebrow,
+[data-theme="dark"] .eyebrow {
+  color: oklch(0.65 0.1 250) !important;
+}
+
+/* Override Mintlify's --primary-light (the green) in dark mode */
+.dark,
+[data-theme="dark"] {
+  --primary-light: oklch(0.55 0.1 250) !important;
+  --primary: oklch(0.55 0.1 250) !important;
+  --accent: oklch(0.55 0.1 250) !important;
 }
 
 /* ============================================
@@ -92,21 +113,25 @@ code, pre, .code-block,
 
 /* ============================================
    Background & Surface Colors
+   Force override on every possible container
    ============================================ */
+html,
 body,
+main,
+#__next,
 #navbar,
-#sidebar,
-#content-area,
-#body-content {
-  background-color: var(--cc-bg) !important;
-  color: var(--cc-fg);
-}
-
-/* Sidebar */
+#navbar-transition,
 #sidebar,
 #sidebar-content,
-#navigation-items {
+#navigation-items,
+#content-area,
+#content-container,
+#content-side-layout,
+#body-content,
+#table-of-contents-layout,
+[data-radix-scroll-area-viewport] {
   background-color: var(--cc-bg) !important;
+  color: var(--cc-fg);
 }
 
 /* Cards and elevated surfaces */
@@ -132,10 +157,10 @@ body,
   background-color: var(--cc-bg) !important;
 }
 
-/* CTA button — green accent */
+/* CTA button — navy with white text, both modes */
 #topbar-cta-button {
-  background-color: var(--cc-accent) !important;
-  color: #0a2a1a !important;
+  background-color: var(--cc-primary) !important;
+  color: var(--cc-primary-fg) !important;
   font-weight: 600;
   border-radius: 0 !important;
 }
@@ -282,10 +307,15 @@ button, .tryit-button {
 }
 
 /* ============================================
-   Table of Contents
+   Table of Contents — "On this page" sidebar
    ============================================ */
 #table-of-contents {
   border-left: 1px solid var(--cc-border) !important;
+  padding-left: 1rem !important;
+}
+
+#table-of-contents-content {
+  padding-left: 0.5rem !important;
 }
 
 .toc-item.active {
@@ -321,6 +351,14 @@ button, .tryit-button {
 .expandable,
 .accordion {
   border-radius: 0 !important;
+}
+
+/* ============================================
+   Sidebar — auto-expand API endpoint groups
+   ============================================ */
+#sidebar .sidebar-group[data-state="closed"] > [data-state="closed"] {
+  display: block !important;
+  height: auto !important;
 }
 
 /* ============================================

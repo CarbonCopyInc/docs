@@ -1,0 +1,116 @@
+---
+title: "MCP Server"
+description: "Use Carbon Copy from AI agents via the Model Context Protocol."
+---
+
+## Overview
+
+The Carbon Copy MCP server lets AI agents — like Claude, Cursor, or any MCP-compatible client — manage your Polymarket copy-trading portfolio through natural tool calls.
+
+Install it with a single line. No code required.
+
+---
+
+## Setup
+
+### Claude Desktop
+
+Add to your config (`~/Library/Application Support/Claude/claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "carboncopy": {
+      "command": "npx",
+      "args": ["-y", "@carbon-copy/mcp"],
+      "env": {
+        "CARBONCOPY_API_KEY": "cc_your_key_here"
+      }
+    }
+  }
+}
+```
+
+### Cursor
+
+Add to `.cursor/mcp.json` in your project:
+
+```json
+{
+  "mcpServers": {
+    "carboncopy": {
+      "command": "npx",
+      "args": ["-y", "@carbon-copy/mcp"],
+      "env": {
+        "CARBONCOPY_API_KEY": "cc_your_key_here"
+      }
+    }
+  }
+}
+```
+
+### Any MCP client
+
+The server uses **stdio transport** — any MCP-compatible client can run it:
+
+```bash
+CARBONCOPY_API_KEY=cc_... npx @carbon-copy/mcp
+```
+
+---
+
+## Available Tools
+
+### Portfolio
+
+| Tool | Description |
+|---|---|
+| `get_portfolio` | Portfolio summary — total value, P&L, win rate |
+| `get_portfolio_history` | Paginated trade history with date filtering |
+| `get_positions` | Currently open positions |
+
+### Traders
+
+| Tool | Description |
+|---|---|
+| `list_traders` | All followed traders with stats |
+| `follow_trader` | Start following a new trader |
+| `get_trader` | Single trader details |
+| `update_trader` | Change copy percentage, max amount, notifications |
+| `unfollow_trader` | Stop following a trader |
+| `pause_trader` | Temporarily pause copy-trading |
+| `resume_trader` | Resume paused copy-trading |
+
+### Orders & Account
+
+| Tool | Description |
+|---|---|
+| `list_orders` | Paginated orders with status/date filters |
+| `get_order` | Single order by ID |
+| `get_account` | Account information |
+| `health` | API health check |
+
+---
+
+## Resources
+
+The MCP server also exposes two read-only resources that AI agents can pull for context without a tool call:
+
+| URI | Description |
+|---|---|
+| `carboncopy://portfolio` | Current portfolio snapshot |
+| `carboncopy://traders` | List of followed traders |
+
+---
+
+## Authentication
+
+Set the `CARBONCOPY_API_KEY` environment variable. The server passes it as a Bearer token on every API call.
+
+Generate a key from the [Dashboard](https://carboncopy.inc) under **Settings → API Keys**. For full agent access, grant `portfolio:read`, `traders:write`, `orders:read`, and `account:read`.
+
+---
+
+## Source Code
+
+The MCP server is open source: [github.com/CarbonCopyInc/carboncopy-mcp](https://github.com/CarbonCopyInc/carboncopy-mcp)
