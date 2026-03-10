@@ -1,97 +1,61 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Carbon Copy API"
+description: "Programmatic access to Polymarket copy-trading. Follow top traders, automate positions, and monitor your portfolio — all via REST."
 ---
 
-## Setting up
+## What is Carbon Copy?
 
-Get your documentation site up and running in minutes.
+Carbon Copy is a copy-trading platform built on top of [Polymarket](https://polymarket.com) — the world's largest prediction market exchange. The Carbon Copy API gives you direct, programmatic control over everything you can do on the platform:
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+- **Follow traders** — choose which wallets to mirror and how aggressively
+- **Manage positions** — view your open copy trades and P&L in real time
+- **Audit orders** — inspect every order your bot has placed
+- **Automate strategy** — pause, resume, and tune copy settings without touching the UI
 
-## Make it yours
+---
 
-Design a docs site that looks great and empowers your users.
+## Key concepts
 
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Copy trading" icon="copy">
+    When a followed trader places a bet on Polymarket, Carbon Copy automatically replicates it in your account at a configurable percentage and max size.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Scoped API keys" icon="key">
+    Every API key carries a set of scopes (`portfolio:read`, `traders:write`, etc.). Issue narrow keys for your bots and never over-privilege them.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Cursor pagination" icon="arrow-right">
+    All list endpoints use opaque cursor-based pagination — no page numbers, no offset drift. Stable even if new records arrive mid-iteration.
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Rate limits" icon="gauge-high">
+    Read endpoints allow 60 req/min with a +10 burst. Write endpoints allow 20 req/min. All limits are per API key.
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+---
 
-Everything you need to create world-class documentation.
+## Base URL
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+```
+https://carboncopy.news
+```
 
-## Need inspiration?
+All endpoints are prefixed with `/api/v1`.
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+---
+
+## Quick navigation
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Make your first API call in under 5 minutes.
+  </Card>
+  <Card title="Authentication" icon="shield-halved" href="/authentication">
+    Understand API keys, scopes, and Privy JWTs.
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    Interactive explorer for all endpoints.
+  </Card>
+  <Card title="Rate limits" icon="clock" href="/rate-limits">
+    Limits, headers, and how to handle 429s.
+  </Card>
+</CardGroup>
