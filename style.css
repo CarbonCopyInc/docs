@@ -157,16 +157,38 @@ main,
   background-color: var(--cc-bg) !important;
 }
 
-/* CTA button — navy with white text, both modes */
-#topbar-cta-button {
-  background-color: var(--cc-primary) !important;
-  color: var(--cc-primary-fg) !important;
-  font-weight: 600;
+/* CTA button — force white text on navy, both modes */
+#topbar-cta-button,
+#topbar-cta-button *,
+#topbar-cta-button span,
+#topbar-cta-button a,
+a#topbar-cta-button,
+[id="topbar-cta-button"],
+.dark #topbar-cta-button,
+.dark #topbar-cta-button *,
+[data-theme="dark"] #topbar-cta-button,
+[data-theme="dark"] #topbar-cta-button * {
+  background-color: #1a3a5c !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
   border-radius: 0 !important;
+  border: none !important;
 }
 
-#topbar-cta-button:hover {
-  opacity: 0.9;
+#topbar-cta-button:hover,
+.dark #topbar-cta-button:hover {
+  background-color: #24496f !important;
+  color: #ffffff !important;
+}
+
+/* Kill any SVG icon color inheritance in the button */
+#topbar-cta-button svg,
+#topbar-cta-button svg path,
+.dark #topbar-cta-button svg,
+.dark #topbar-cta-button svg path {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
 }
 
 /* ============================================
