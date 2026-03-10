@@ -11,7 +11,28 @@ Install it with a single line. No code required.
 
 ---
 
-## Setup
+## Quick Install
+
+<CodeGroup>
+```bash Claude Code
+claude mcp add carboncopy -s user -e CARBONCOPY_API_KEY=cc_your_key -- npx -y @carbon-copy/mcp
+```
+
+```bash Codex CLI
+codex mcp add carboncopy --env CARBONCOPY_API_KEY=cc_your_key -- npx -y @carbon-copy/mcp
+```
+
+```bash OpenCode (interactive)
+opencode mcp add
+# Select "local", name "carboncopy", command: npx -y @carbon-copy/mcp
+```
+</CodeGroup>
+
+Replace `cc_your_key` with your actual API key from the [Dashboard](https://carboncopy.inc).
+
+---
+
+## Manual Setup
 
 ### Claude Desktop
 
