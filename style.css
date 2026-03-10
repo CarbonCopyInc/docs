@@ -1,0 +1,331 @@
+/*
+ * Carbon Copy API Docs — Custom Styling
+ * Matches habakkuk (carboncopy.news) design system
+ *
+ * Design language: "Financial press" — warm cream, navy, aged newspaper feel
+ * Fonts: Playfair Display (headings), Geist Sans (body), Geist Mono (code)
+ */
+
+/* ============================================
+   Google Fonts
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Playfair+Display:wght@700;800;900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap');
+
+/* ============================================
+   CSS Custom Properties — Light Mode
+   ============================================ */
+:root {
+  /* Warm cream background — aged newspaper */
+  --cc-bg: oklch(0.985 0.008 85);
+  --cc-fg: oklch(0.18 0.01 250);
+  --cc-card: oklch(0.99 0.006 85);
+  --cc-border: oklch(0.85 0.012 80);
+  --cc-muted: oklch(0.45 0.01 250);
+  --cc-muted-bg: oklch(0.95 0.008 80);
+
+  /* Navy — classic financial press */
+  --cc-primary: oklch(0.48 0.12 255);
+  --cc-primary-fg: oklch(0.98 0.005 85);
+
+  /* Accent — logo green */
+  --cc-accent: #18E299;
+
+  /* Warm destructive — oxblood */
+  --cc-destructive: oklch(0.45 0.15 25);
+}
+
+/* ============================================
+   CSS Custom Properties — Dark Mode
+   ============================================ */
+.dark, [data-theme="dark"] {
+  /* Rich, warm dark — like a private club */
+  --cc-bg: oklch(0.16 0.01 250);
+  --cc-fg: oklch(0.92 0.008 80);
+  --cc-card: oklch(0.2 0.012 250);
+  --cc-border: oklch(0.3 0.015 250);
+  --cc-muted: oklch(0.65 0.01 80);
+  --cc-muted-bg: oklch(0.24 0.012 250);
+
+  /* Lighter navy for dark mode */
+  --cc-primary: oklch(0.55 0.1 250);
+  --cc-primary-fg: oklch(0.98 0.005 85);
+
+  /* Warm destructive */
+  --cc-destructive: oklch(0.6 0.18 25);
+}
+
+/* ============================================
+   Global Typography
+   ============================================ */
+body {
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings — Playfair Display (bold serif, financial press) */
+h1, h2, h3,
+#page-title,
+.eyebrow + h1 {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif !important;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-weight: 900;
+}
+
+/* Body text — slightly warm with Source Serif for long-form */
+.mdx-content p,
+.mdx-content li {
+  font-family: 'Source Serif 4', 'Geist', Georgia, serif;
+  line-height: 1.7;
+}
+
+/* Code — Geist Mono */
+code, pre, .code-block,
+[data-rehype-pretty-code-fragment] {
+  font-family: 'Geist Mono', 'JetBrains Mono', 'Fira Code', monospace !important;
+  font-size: 0.875rem;
+}
+
+/* ============================================
+   Background & Surface Colors
+   ============================================ */
+body,
+#navbar,
+#sidebar,
+#content-area,
+#body-content {
+  background-color: var(--cc-bg) !important;
+  color: var(--cc-fg);
+}
+
+/* Sidebar */
+#sidebar,
+#sidebar-content,
+#navigation-items {
+  background-color: var(--cc-bg) !important;
+}
+
+/* Cards and elevated surfaces */
+.card,
+.callout,
+.expandable,
+.accordion,
+.api-section,
+#panel {
+  background-color: var(--cc-card) !important;
+  border-color: var(--cc-border) !important;
+}
+
+/* ============================================
+   Navbar
+   ============================================ */
+#navbar {
+  border-bottom: 1px solid var(--cc-border) !important;
+  backdrop-filter: blur(12px);
+}
+
+#navbar-transition {
+  background-color: var(--cc-bg) !important;
+}
+
+/* CTA button — green accent */
+#topbar-cta-button {
+  background-color: var(--cc-accent) !important;
+  color: #0a2a1a !important;
+  font-weight: 600;
+  border-radius: 0 !important;
+}
+
+#topbar-cta-button:hover {
+  opacity: 0.9;
+}
+
+/* ============================================
+   Sidebar Navigation
+   ============================================ */
+.sidebar-group-header {
+  font-family: 'Geist', sans-serif !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: var(--cc-muted) !important;
+}
+
+/* Active nav item */
+#sidebar a[aria-current="page"],
+#sidebar a.active {
+  color: var(--cc-primary) !important;
+  font-weight: 600;
+}
+
+/* ============================================
+   Borders — warm column rules, like newspaper
+   ============================================ */
+hr,
+.sidebar-nav-group-divider,
+#table-of-contents {
+  border-color: var(--cc-border) !important;
+}
+
+/* ============================================
+   Links
+   ============================================ */
+a.link,
+.mdx-content a {
+  color: var(--cc-primary);
+  text-decoration-color: var(--cc-border);
+  text-underline-offset: 3px;
+}
+
+a.link:hover,
+.mdx-content a:hover {
+  text-decoration-color: var(--cc-primary);
+}
+
+/* ============================================
+   Code Blocks
+   ============================================ */
+.code-block {
+  border: 1px solid var(--cc-border) !important;
+  border-radius: 0 !important;
+}
+
+/* Inline code */
+:not(pre) > code {
+  background-color: var(--cc-muted-bg) !important;
+  border: 1px solid var(--cc-border) !important;
+  border-radius: 2px !important;
+  padding: 0.15em 0.35em;
+  font-size: 0.85em;
+}
+
+/* ============================================
+   Cards — no border radius (industrial feel)
+   ============================================ */
+.card {
+  border-radius: 0 !important;
+}
+
+.card-group .card {
+  border-radius: 0 !important;
+}
+
+/* ============================================
+   API Reference — method pills
+   ============================================ */
+.method-pill {
+  border-radius: 0 !important;
+  font-family: 'Geist Mono', monospace !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+}
+
+/* ============================================
+   Callouts / Admonitions
+   ============================================ */
+.callout {
+  border-radius: 0 !important;
+  border-left: 3px solid var(--cc-primary) !important;
+}
+
+/* ============================================
+   Selection — yellow in light, cream in dark
+   ============================================ */
+::selection {
+  background-color: rgb(255, 243, 158);
+  color: oklch(0.18 0.01 250);
+}
+
+.dark ::selection,
+[data-theme="dark"] ::selection {
+  background-color: oklch(0.95 0.01 80);
+  color: oklch(0.18 0.01 250);
+}
+
+/* ============================================
+   Footer
+   ============================================ */
+footer,
+#footer {
+  background-color: var(--cc-bg) !important;
+  border-top: 1px solid var(--cc-border) !important;
+}
+
+/* ============================================
+   Tabs (navigation)
+   ============================================ */
+.nav-tabs-item[aria-selected="true"] {
+  border-bottom-color: var(--cc-primary) !important;
+}
+
+/* ============================================
+   Buttons & Interactive Elements
+   ============================================ */
+button, .tryit-button {
+  border-radius: 0 !important;
+}
+
+/* ============================================
+   Pagination (prev/next)
+   ============================================ */
+.pagination-next,
+.pagination-prev {
+  border-radius: 0 !important;
+  border-color: var(--cc-border) !important;
+}
+
+/* ============================================
+   Table of Contents
+   ============================================ */
+#table-of-contents {
+  border-left: 1px solid var(--cc-border) !important;
+}
+
+.toc-item.active {
+  color: var(--cc-primary) !important;
+  border-left-color: var(--cc-primary) !important;
+}
+
+/* ============================================
+   Search
+   ============================================ */
+#search-input {
+  border-radius: 0 !important;
+  font-family: 'Geist', sans-serif !important;
+}
+
+/* ============================================
+   API Playground
+   ============================================ */
+#api-playground-input {
+  font-family: 'Geist Mono', monospace !important;
+  border-radius: 0 !important;
+}
+
+#request-example,
+#response-example {
+  border-radius: 0 !important;
+  border: 1px solid var(--cc-border) !important;
+}
+
+/* ============================================
+   Expandable / Accordion
+   ============================================ */
+.expandable,
+.accordion {
+  border-radius: 0 !important;
+}
+
+/* ============================================
+   Smooth transitions
+   ============================================ */
+a, button, .card, .nav-tabs-item, .toc-item {
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}

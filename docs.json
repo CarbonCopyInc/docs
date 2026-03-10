@@ -1,7 +1,8 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "palm",
   "name": "Carbon Copy API",
+  "description": "Programmatic access to Polymarket copy-trading. Manage portfolios, follow traders, and track orders via REST API.",
   "colors": {
     "primary": "#1a3a5c",
     "light": "#18E299",
@@ -10,7 +11,22 @@
   "favicon": "/favicon.svg",
   "logo": {
     "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "dark": "/logo/dark.svg",
+    "href": "https://carboncopy.news"
+  },
+  "styling": {
+    "codeblocks": {
+      "theme": {
+        "light": "github-light",
+        "dark": "github-dark"
+      }
+    }
+  },
+  "thumbnails": {
+    "appearance": "dark",
+    "fonts": {
+      "family": "Playfair Display"
+    }
   },
   "navigation": {
     "tabs": [
