@@ -5,8 +5,8 @@
   "description": "Programmatic access to Polymarket copy-trading. Manage portfolios, follow traders, and track orders via REST API.",
   "colors": {
     "primary": "#1a3a5c",
-    "light": "#18E299",
-    "dark": "#0C8C5E"
+    "light": "#4a7ab5",
+    "dark": "#1a3a5c"
   },
   "favicon": "/favicon.png",
   "logo": {
