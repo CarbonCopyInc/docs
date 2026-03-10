@@ -10,43 +10,28 @@
    CSS Custom Properties — Light Mode
    ============================================ */
 :root {
-  /* Warm cream background — aged newspaper */
-  --cc-bg: oklch(0.985 0.008 85);
-  --cc-fg: oklch(0.18 0.01 250);
-  --cc-card: oklch(0.99 0.006 85);
-  --cc-border: oklch(0.85 0.012 80);
-  --cc-muted: oklch(0.45 0.01 250);
-  --cc-muted-bg: oklch(0.95 0.008 80);
-
-  /* Navy — classic financial press */
-  --cc-primary: oklch(0.48 0.12 255);
-  --cc-primary-fg: oklch(0.98 0.005 85);
-
-  /* Accent — logo green */
-  --cc-accent: #18E299;
-
-  /* Warm destructive — oxblood */
-  --cc-destructive: oklch(0.45 0.15 25);
+  --cc-bg: #FCFAF4;
+  --cc-fg: #1E2030;
+  --cc-card: #FDFCF8;
+  --cc-border: #D9D3C7;
+  --cc-muted: #6B6E7B;
+  --cc-muted-bg: #F0ECE4;
+  --cc-primary: #1a3a5c;
+  --cc-primary-fg: #FCFAF4;
 }
 
 /* ============================================
    CSS Custom Properties — Dark Mode
    ============================================ */
 .dark, [data-theme="dark"] {
-  /* Rich, warm dark — like a private club */
-  --cc-bg: oklch(0.16 0.01 250);
-  --cc-fg: oklch(0.92 0.008 80);
-  --cc-card: oklch(0.2 0.012 250);
-  --cc-border: oklch(0.3 0.015 250);
-  --cc-muted: oklch(0.65 0.01 80);
-  --cc-muted-bg: oklch(0.24 0.012 250);
-
-  /* Lighter navy for dark mode — NOT green */
-  --cc-primary: oklch(0.55 0.1 250);
-  --cc-primary-fg: oklch(0.98 0.005 85);
-
-  /* Warm destructive */
-  --cc-destructive: oklch(0.6 0.18 25);
+  --cc-bg: #1E2030;
+  --cc-fg: #E8E6E0;
+  --cc-card: #262838;
+  --cc-border: #3A3D52;
+  --cc-muted: #9B9DA8;
+  --cc-muted-bg: #2E3044;
+  --cc-primary: #4a7ab5;
+  --cc-primary-fg: #FCFAF4;
 }
 
 /* Force dark mode primary/accent to navy, override Mintlify's green */
@@ -59,15 +44,15 @@
 
 .dark .eyebrow,
 [data-theme="dark"] .eyebrow {
-  color: oklch(0.65 0.1 250) !important;
+  color: #6B8EBF !important;
 }
 
-/* Override Mintlify's --primary-light (the green) in dark mode */
+/* Override Mintlify's --primary-light in dark mode */
 .dark,
 [data-theme="dark"] {
-  --primary-light: oklch(0.55 0.1 250) !important;
-  --primary: oklch(0.55 0.1 250) !important;
-  --accent: oklch(0.55 0.1 250) !important;
+  --primary-light: #4a7ab5 !important;
+  --primary: #4a7ab5 !important;
+  --accent: #4a7ab5 !important;
 }
 
 /* ============================================
@@ -236,14 +221,14 @@ a.link:hover,
    Selection — yellow in light, cream in dark
    ============================================ */
 ::selection {
-  background-color: rgb(255, 243, 158);
-  color: oklch(0.18 0.01 250);
+  background-color: #FFF39E;
+  color: #1E2030;
 }
 
 .dark ::selection,
 [data-theme="dark"] ::selection {
-  background-color: oklch(0.95 0.01 80);
-  color: oklch(0.18 0.01 250);
+  background-color: #E8E6E0;
+  color: #1E2030;
 }
 
 /* ============================================
