@@ -1,0 +1,123 @@
+---
+title: "Authentication"
+description: "Carbon Copy uses two authentication mechanisms: scoped API keys for data endpoints, and Privy JWTs for key management."
+---
+
+## Overview
+
+| Auth method | When to use | Header format |
+|---|---|---|
+| **API Key** | Portfolio, traders, orders, account | `Authorization: Bearer cc_<key>` |
+| **Privy JWT** | Creating and revoking API keys | `Authorization: Bearer <jwt>` |
+
+Most integrations only need API keys. You only need a Privy JWT when programmatically managing keys themselves.
+
+---
+
+## API Keys
+
+### Format
+
+API keys follow the format `cc_` followed by 64 lowercase hexadecimal characters:
+
+```
+cc_a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2
+```
+
+### Usage
+
+Pass your key as a Bearer token in the `Authorization` header:
+
+```bash
+curl https://carboncopy.news/api/v1/portfolio \
+  -H "Authorization: Bearer cc_your_key_here"
+```
+
+### Scopes
+
+Every key is issued with a set of scopes that control what it can access. Always issue keys with the minimum scopes your use-case requires.
+
+| Scope | Values | Controls |
+|---|---|---|
+| `portfolio` | `none`, `read` | View portfolio summary, history, and positions |
+| `traders` | `none`, `read`, `write` | List/view traders (`read`); follow/edit/unfollow (`write`) |
+| `orders` | `none`, `read`, `write` | View orders (`read`); future order mutations (`write`) |
+| `markets` | `none`, `read` | Market data access (coming soon) |
+| `account` | `none`, `read` | View account information |
+
+<Note>
+  `write` scope implies `read` for the same resource. You don't need to grant both.
+</Note>
+
+### Key lifecycle
+
+- Keys are created via the Dashboard (**Settings → API Keys**) or the `POST /api/v1/keys` endpoint.
+- A key's secret is revealed **exactly once** at creation — it cannot be retrieved later.
+- Keys can have an optional expiry timestamp (`expiresAt`).
+- Maximum **10 active keys** per account.
+- Revoke a key via the Dashboard or `DELETE /api/v1/keys/{keyId}`.
+
+### Security best practices
+
+<Warning>
+  Never commit API keys to source control. Use environment variables or a secrets manager.
+</Warning>
+
+- **Rotate regularly** — set an `expiresAt` and automate rotation in production.
+- **Narrow scopes** — monitoring bots only need `portfolio:read`; they don't need `traders:write`.
+- **One key per service** — easier to audit, easier to revoke if compromised.
+- **Revoke immediately** if a key is exposed.
+
+---
+
+## Privy JWT (Key Management only)
+
+Privy JWTs are issued by [Privy](https://privy.io) after you authenticate with your Carbon Copy account. They are required for the Key Management endpoints (`POST /api/v1/keys`, `GET /api/v1/keys`, `DELETE /api/v1/keys/{keyId}`).
+
+Obtain a Privy JWT client-side using the [Privy SDK](https://docs.privy.io):
+
+```typescript
+import { usePrivy } from "@privy-io/react-auth";
+
+const { getAccessToken } = usePrivy();
+const jwt = await getAccessToken();
+```
+
+Then pass it as a Bearer token, identical to an API key:
+
+```bash
+curl -X POST https://carboncopy.news/api/v1/keys \
+  -H "Authorization: Bearer <privy-jwt>" \
+  -H "Content-Type: application/json" \
+  -d '{ "name": "my-bot", "scopes": { "portfolio": "read" } }'
+```
+
+Privy JWTs are short-lived. Refresh them before making key management calls.
+
+---
+
+## Error responses
+
+If authentication fails, the API returns a `401 Unauthorized`:
+
+```json
+{
+  "error": {
+    "code": "unauthorized",
+    "message": "Invalid or missing API key."
+  }
+}
+```
+
+If you authenticate successfully but your key lacks the required scope, you'll receive `403 Forbidden`:
+
+```json
+{
+  "error": {
+    "code": "forbidden",
+    "message": "This key does not have the required scope."
+  }
+}
+```
+
+See [Errors](/errors) for the full error reference.

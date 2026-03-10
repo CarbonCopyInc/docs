@@ -1,0 +1,192 @@
+---
+title: "Errors"
+description: "Carbon Copy uses consistent, machine-readable error codes across all endpoints."
+---
+
+## Error format
+
+All error responses share the same envelope:
+
+```json
+{
+  "error": {
+    "code": "error_code",
+    "message": "Human-readable description of what went wrong."
+  }
+}
+```
+
+The `code` field is a stable string identifier — use this in your error handling logic. The `message` field is for humans and may change over time.
+
+---
+
+## Error codes
+
+| HTTP Status | Code | Description |
+|---|---|---|
+| `400` | `bad_request` | Malformed request body or invalid query parameters |
+| `401` | `unauthorized` | Missing, invalid, or expired authentication credentials |
+| `403` | `forbidden` | Authenticated but key lacks required scope |
+| `404` | `not_found` | Resource does not exist (or you don't have access to it) |
+| `405` | `method_not_allowed` | HTTP method not supported for this endpoint |
+| `409` | `conflict` | Request conflicts with existing state (e.g. already following trader) |
+| `422` | `quota_exceeded` | Business rule quota exceeded (e.g. max 10 API keys) |
+| `429` | `rate_limited` | Too many requests — back off and retry |
+| `500` | `internal_error` | Unexpected server-side error |
+
+---
+
+## Examples
+
+### 400 — Bad request
+
+```json
+{
+  "error": {
+    "code": "bad_request",
+    "message": "copyPercentage must be between 0 and 100."
+  }
+}
+```
+
+Returned when required fields are missing, types are wrong, or values fall outside allowed ranges.
+
+---
+
+### 401 — Unauthorized
+
+```json
+{
+  "error": {
+    "code": "unauthorized",
+    "message": "Invalid or missing API key."
+  }
+}
+```
+
+Check that:
+- You're sending the `Authorization: Bearer <key>` header
+- The key hasn't been revoked or expired
+- For key management endpoints, you're using a Privy JWT, not an API key
+
+---
+
+### 403 — Forbidden
+
+```json
+{
+  "error": {
+    "code": "forbidden",
+    "message": "This key does not have the required scope."
+  }
+}
+```
+
+Your key is valid but lacks the scope for this operation. For example, calling `POST /api/v1/traders` with a key that only has `traders:read`.
+
+---
+
+### 404 — Not found
+
+```json
+{
+  "error": {
+    "code": "not_found",
+    "message": "Trader not found."
+  }
+}
+```
+
+The requested resource doesn't exist, or you're not following the specified trader.
+
+---
+
+### 409 — Conflict
+
+```json
+{
+  "error": {
+    "code": "conflict",
+    "message": "You are already following this trader."
+  }
+}
+```
+
+Returned by `POST /api/v1/traders` when you attempt to follow a wallet you're already copying.
+
+---
+
+### 422 — Quota exceeded
+
+```json
+{
+  "error": {
+    "code": "quota_exceeded",
+    "message": "Maximum of 10 API keys per user. Please revoke an existing key first."
+  }
+}
+```
+
+Returned when a business rule cap is hit, distinct from a validation error.
+
+---
+
+### 429 — Rate limited
+
+```json
+{
+  "error": {
+    "code": "rate_limited",
+    "message": "Rate limit exceeded. Retry after 30 seconds."
+  }
+}
+```
+
+See [Rate Limits](/rate-limits) for handling strategies.
+
+---
+
+### 500 — Internal error
+
+```json
+{
+  "error": {
+    "code": "internal_error",
+    "message": "An unexpected error occurred. Please try again."
+  }
+}
+```
+
+This shouldn't happen. If you're seeing consistent 500s, contact [support@carboncopy.news](mailto:support@carboncopy.news).
+
+---
+
+## Error handling example
+
+```typescript
+async function callApi(url: string, key: string) {
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${key}` },
+  });
+
+  if (!response.ok) {
+    const { error } = await response.json();
+
+    switch (error.code) {
+      case "unauthorized":
+        throw new Error("Check your API key");
+      case "forbidden":
+        throw new Error(`Missing scope for ${url}`);
+      case "rate_limited":
+        const retryAfter = response.headers.get("Retry-After");
+        throw new Error(`Rate limited — retry in ${retryAfter}s`);
+      case "not_found":
+        return null; // treat as empty, not fatal
+      default:
+        throw new Error(`API error: ${error.message}`);
+    }
+  }
+
+  return response.json();
+}
+```

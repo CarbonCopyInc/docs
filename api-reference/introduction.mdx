@@ -1,33 +1,53 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "API Reference"
+description: "Interactive documentation for all Carbon Copy API endpoints. Try requests directly in your browser."
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+## Overview
 
-## Welcome
+The Carbon Copy API follows REST conventions. All endpoints:
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+- Accept and return **JSON**
+- Use **Bearer token** authentication (API key or Privy JWT)
+- Return consistent [error envelopes](/errors)
+- Include [rate limit headers](/rate-limits) on every response
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+**Base URL:** `https://carboncopy.news`  
+**Version:** `v1` (prefix: `/api/v1`)
 
-## Authentication
+---
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+## Endpoint groups
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+| Group | Description |
+|---|---|
+| [Health](/api-reference/openapi/getHealth) | Unauthenticated health check |
+| [Portfolio](/api-reference/openapi/getPortfolio) | Portfolio summary, trade history, open positions |
+| [Traders](/api-reference/openapi/listTraders) | Follow, configure, and manage copied traders |
+| [Orders](/api-reference/openapi/listOrders) | Inspect orders placed by your copy-trading bot |
+| [Account](/api-reference/openapi/getAccount) | Your Carbon Copy account info |
+| [Key Management](/api-reference/openapi/createApiKey) | Create and revoke API keys (Privy JWT required) |
+
+---
+
+## Authentication in the explorer
+
+To try authenticated endpoints in the interactive explorer:
+
+1. Click **Authorize** at the top of any endpoint
+2. Enter your API key as: `cc_your_key_here` (no `Bearer ` prefix — the explorer adds it)
+3. For Key Management endpoints, enter your Privy JWT instead
+
+Don't have a key? See the [Quickstart](/quickstart) to create one.
+
+---
+
+## OpenAPI spec
+
+The full OpenAPI 3.1 spec is available at:
+
 ```
+https://carboncopy.news/api-reference/openapi.json
+```
+
+You can import this into [Postman](https://postman.com), [Insomnia](https://insomnia.rest), or any OpenAPI-compatible tool.

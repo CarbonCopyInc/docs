@@ -1,0 +1,117 @@
+---
+title: "Rate Limits"
+description: "Understand Carbon Copy's rate limit tiers, response headers, and how to handle 429 errors gracefully."
+---
+
+## Overview
+
+Rate limits are enforced per API key. Different endpoint categories have different limits suited to their usage patterns.
+
+| Tier | Limit | Burst | Applies to |
+|---|---|---|---|
+| **Read** | 60 req/min | +10 | Portfolio, traders (GET), orders (GET), account |
+| **Write** | 20 req/min | +5 | Traders (POST, PATCH, DELETE), orders (write) |
+| **Key create** | 10 req/min | none (fixed) | `POST /api/v1/keys` |
+| **Key read** | 30 req/min | +5 | `GET /api/v1/keys` |
+
+Limits use a **token bucket** algorithm. The burst allowance lets you absorb short spikes above the sustained rate, then the bucket refills at the base rate.
+
+---
+
+## Rate limit headers
+
+Every response includes headers so you can monitor your consumption:
+
+| Header | Description |
+|---|---|
+| `X-RateLimit-Limit` | Total requests allowed per minute for this endpoint tier |
+| `X-RateLimit-Remaining` | Requests remaining in the current window |
+| `Retry-After` | Seconds to wait (only present on `429` responses) |
+
+Example response headers:
+
+```
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 47
+```
+
+---
+
+## Handling 429 responses
+
+When you exceed a rate limit, the API returns `429 Too Many Requests`:
+
+```json
+{
+  "error": {
+    "code": "rate_limited",
+    "message": "Rate limit exceeded. Retry after 30 seconds."
+  }
+}
+```
+
+The `Retry-After` header tells you exactly how long to wait:
+
+```
+HTTP/1.1 429 Too Many Requests
+Retry-After: 30
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 0
+```
+
+### Retry strategy
+
+Implement **exponential backoff with jitter** rather than a fixed sleep:
+
+```python
+import time
+import random
+import requests
+
+def request_with_backoff(url, headers, max_retries=5):
+    for attempt in range(max_retries):
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 429:
+            retry_after = int(response.headers.get("Retry-After", 30))
+            # Add jitter to avoid thundering herd
+            sleep_time = retry_after + random.uniform(0, 5)
+            print(f"Rate limited. Waiting {sleep_time:.1f}s (attempt {attempt + 1})")
+            time.sleep(sleep_time)
+            continue
+
+        return response
+
+    raise Exception("Max retries exceeded")
+```
+
+```typescript
+async function requestWithBackoff(url: string, headers: HeadersInit, maxRetries = 5) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const response = await fetch(url, { headers });
+
+    if (response.status === 429) {
+      const retryAfter = parseInt(response.headers.get("Retry-After") ?? "30", 10);
+      const jitter = Math.random() * 5;
+      const sleepMs = (retryAfter + jitter) * 1000;
+      console.log(`Rate limited. Waiting ${sleepMs}ms`);
+      await new Promise((r) => setTimeout(r, sleepMs));
+      continue;
+    }
+
+    return response;
+  }
+
+  throw new Error("Max retries exceeded");
+}
+```
+
+---
+
+## Tips to stay within limits
+
+- **Paginate efficiently** — fetch larger pages (up to 100 records) instead of many small requests.
+- **Cache aggressively** — portfolio summaries and trader lists don't change every second.
+- **Use `since`/`until`** — filter by time range to avoid re-fetching old data.
+- **One key per service** — avoids different services competing for the same key's budget.
+- **Monitor `X-RateLimit-Remaining`** — slow down proactively before hitting 0.

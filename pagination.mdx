@@ -1,0 +1,176 @@
+---
+title: "Pagination"
+description: "Carbon Copy uses cursor-based pagination for all list endpoints. No page numbers — just opaque cursors that stay stable as data changes."
+---
+
+## Overview
+
+List endpoints return results in pages. Each response includes:
+
+| Field | Type | Description |
+|---|---|---|
+| `page` | `array` | The records for this page |
+| `continueCursor` | `string \| null` | Pass this as `cursor` in the next request. `null` when there are no more pages. |
+| `isDone` | `boolean` | `true` when this is the last page |
+
+---
+
+## Query parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `limit` | `integer` | `50` | Records per page (1–100) |
+| `cursor` | `string` | — | Cursor from previous response |
+| `since` | `integer` | — | Unix timestamp (ms) — include records at or after this time |
+| `until` | `integer` | — | Unix timestamp (ms) — include records before this time |
+
+---
+
+## Basic example
+
+**First page:**
+
+```bash
+curl "https://carboncopy.news/api/v1/portfolio/history?limit=50" \
+  -H "Authorization: Bearer $CC_API_KEY"
+```
+
+```json
+{
+  "page": [ ... ],
+  "continueCursor": "eyJpZCI6Imsx...",
+  "isDone": false
+}
+```
+
+**Next page** — pass `continueCursor` as `cursor`:
+
+```bash
+curl "https://carboncopy.news/api/v1/portfolio/history?limit=50&cursor=eyJpZCI6Imsx..." \
+  -H "Authorization: Bearer $CC_API_KEY"
+```
+
+```json
+{
+  "page": [ ... ],
+  "continueCursor": null,
+  "isDone": true
+}
+```
+
+When `isDone` is `true` (or `continueCursor` is `null`), you've consumed all pages.
+
+---
+
+## Iterating all pages
+
+### Python
+
+```python
+import requests
+
+def fetch_all(endpoint, api_key, **params):
+    headers = {"Authorization": f"Bearer {api_key}"}
+    cursor = None
+    results = []
+
+    while True:
+        query = {**params, "limit": 100}
+        if cursor:
+            query["cursor"] = cursor
+
+        response = requests.get(endpoint, headers=headers, params=query)
+        response.raise_for_status()
+        data = response.json()
+
+        results.extend(data["page"])
+
+        if data["isDone"] or not data.get("continueCursor"):
+            break
+
+        cursor = data["continueCursor"]
+
+    return results
+
+# Example
+trades = fetch_all(
+    "https://carboncopy.news/api/v1/portfolio/history",
+    api_key="cc_your_key_here",
+    since=1741000000000,
+)
+print(f"Fetched {len(trades)} trades")
+```
+
+### TypeScript
+
+```typescript
+interface PaginatedResponse<T> {
+  page: T[];
+  continueCursor: string | null;
+  isDone: boolean;
+}
+
+async function fetchAll<T>(
+  endpoint: string,
+  apiKey: string,
+  params: Record<string, string | number> = {}
+): Promise<T[]> {
+  const results: T[] = [];
+  let cursor: string | null = null;
+
+  do {
+    const url = new URL(endpoint);
+    url.searchParams.set("limit", "100");
+    for (const [k, v] of Object.entries(params)) {
+      url.searchParams.set(k, String(v));
+    }
+    if (cursor) url.searchParams.set("cursor", cursor);
+
+    const res = await fetch(url.toString(), {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data: PaginatedResponse<T> = await res.json();
+    results.push(...data.page);
+    cursor = data.continueCursor;
+  } while (cursor !== null);
+
+  return results;
+}
+
+// Example
+const trades = await fetchAll(
+  "https://carboncopy.news/api/v1/portfolio/history",
+  "cc_your_key_here",
+  { since: 1741000000000 }
+);
+```
+
+---
+
+## Time-range filtering
+
+Use `since` and `until` to fetch a specific window without iterating your entire history:
+
+```bash
+# All trades in the last 7 days
+NOW=$(date +%s%3N)
+SEVEN_DAYS_AGO=$((NOW - 7 * 24 * 60 * 60 * 1000))
+
+curl "https://carboncopy.news/api/v1/portfolio/history?since=${SEVEN_DAYS_AGO}&limit=100" \
+  -H "Authorization: Bearer $CC_API_KEY"
+```
+
+<Tip>
+  For production polling, store the `continueCursor` from your last run and resume from there rather than re-fetching everything.
+</Tip>
+
+---
+
+## Notes on cursors
+
+- Cursors are **opaque** — don't parse or modify them.
+- Cursors are **stable** — new records arriving during pagination won't cause you to skip or re-see existing records.
+- Cursors may expire after a period of inactivity. If you receive a `400 bad_request` error on a cursor, start a fresh request from the beginning.

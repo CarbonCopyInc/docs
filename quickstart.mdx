@@ -1,80 +1,136 @@
 ---
 title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+description: "Make your first Carbon Copy API call in under 5 minutes."
 ---
 
-## Get started in three steps
+## Overview
 
-Get your documentation site running locally and make your first customization.
+This guide walks you through:
 
-### Step 1: Set up your local environment
+1. Creating a Carbon Copy account
+2. Generating an API key
+3. Making your first request
+4. Iterating from there
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+---
 
-### Step 2: Deploy your changes
+## Step 1 — Create an account
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+Head to [carboncopy.news](https://carboncopy.news) and sign in with your Privy wallet or email. Once authenticated, connect your Polymarket wallet under **Settings → Wallet**.
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+---
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+## Step 2 — Generate an API key
 
-### Step 3: Go live
+Navigate to **Settings → API Keys** in the Dashboard, then click **New Key**.
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+Configure the scopes you need — for a read-only monitoring bot, `portfolio:read` and `traders:read` are sufficient. For a bot that can follow/unfollow traders, also add `traders:write`.
+
+<Note>
+  The key secret (`cc_<64 hex chars>`) is shown **exactly once** at creation time. Copy it to your password manager or secrets store immediately.
+</Note>
+
+You can also create keys via the API itself (requires a Privy JWT):
+
+```bash
+curl -X POST https://carboncopy.news/api/v1/keys \
+  -H "Authorization: Bearer <your-privy-jwt>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "monitoring-bot",
+    "scopes": {
+      "portfolio": "read",
+      "traders": "read"
+    }
+  }'
+```
+
+---
+
+## Step 3 — Make your first request
+
+Verify the API is reachable (no auth required):
+
+```bash
+curl https://carboncopy.news/api/v1/health
+```
+
+```json
+{
+  "status": "ok",
+  "version": "1.0.0",
+  "timestamp": 1741600000000
+}
+```
+
+Now fetch your portfolio summary using your new key:
+
+```bash
+export CC_API_KEY="cc_your_key_here"
+
+curl https://carboncopy.news/api/v1/portfolio \
+  -H "Authorization: Bearer $CC_API_KEY"
+```
+
+```json
+{
+  "totalValue": 5420.75,
+  "activePositions": 12,
+  "totalPnL": 420.50,
+  "totalPnLPercent": 8.41,
+  "winRate": 62.5,
+  "totalTrades": 48,
+  "traders": [...]
+}
+```
+
+---
+
+## Step 4 — Follow a trader
+
+To start copying a wallet, your key needs `traders:write` scope:
+
+```bash
+curl -X POST https://carboncopy.news/api/v1/traders \
+  -H "Authorization: Bearer $CC_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "walletAddress": "0xAbCd1234...",
+    "copyPercentage": 25,
+    "maxCopyAmount": 500
+  }'
+```
+
+This will copy 25% of every trade by `0xAbCd1234...`, up to a maximum of $500 USDC per trade.
+
+---
+
+## Step 5 — Monitor your positions
+
+Poll open positions to track what's currently deployed:
+
+```bash
+curl "https://carboncopy.news/api/v1/portfolio/positions?limit=20" \
+  -H "Authorization: Bearer $CC_API_KEY"
+```
+
+See [Pagination](/pagination) for iterating beyond the first page.
+
+---
 
 ## Next steps
 
-Now that you have your docs running, explore these key features:
-
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card title="Authentication" icon="shield-halved" href="/authentication">
+    Learn about scopes and Privy JWT auth.
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    Full interactive endpoint documentation.
+  </Card>
+  <Card title="Errors" icon="triangle-exclamation" href="/errors">
+    Handle errors gracefully in your bot.
+  </Card>
+  <Card title="Pagination" icon="list" href="/pagination">
+    Iterate over large result sets with cursors.
+  </Card>
 </CardGroup>
-
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>
