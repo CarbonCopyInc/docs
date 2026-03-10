@@ -10,28 +10,28 @@
    CSS Custom Properties — Light Mode
    ============================================ */
 :root {
-  --cc-bg: #FCFAF4;
-  --cc-fg: #1E2030;
-  --cc-card: #FDFCF8;
-  --cc-border: #D9D3C7;
-  --cc-muted: #6B6E7B;
-  --cc-muted-bg: #F0ECE4;
-  --cc-primary: #1a3a5c;
-  --cc-primary-fg: #FCFAF4;
+  --cc-bg: #fdfaf4;
+  --cc-fg: #0e1216;
+  --cc-card: #fefcf7;
+  --cc-border: #d2cdc5;
+  --cc-muted: #51565b;
+  --cc-muted-bg: #f1eee9;
+  --cc-primary: #285e9f;
+  --cc-primary-fg: #faf8f5;
 }
 
 /* ============================================
    CSS Custom Properties — Dark Mode
    ============================================ */
 .dark, [data-theme="dark"] {
-  --cc-bg: #141518;
-  --cc-fg: #E8E6E0;
-  --cc-card: #1C1C20;
-  --cc-border: #2E2E34;
-  --cc-muted: #9B9DA8;
-  --cc-muted-bg: #222226;
-  --cc-primary: #4a7ab5;
-  --cc-primary-fg: #FCFAF4;
+  --cc-bg: #0a0e11;
+  --cc-fg: #e7e4df;
+  --cc-card: #12171b;
+  --cc-border: #282f35;
+  --cc-muted: #928f88;
+  --cc-muted-bg: #1b2025;
+  --cc-primary: #4075aa;
+  --cc-primary-fg: #faf8f5;
 }
 
 /* Force dark mode primary/accent to navy, override Mintlify's green */
@@ -44,15 +44,15 @@
 
 .dark .eyebrow,
 [data-theme="dark"] .eyebrow {
-  color: #6B8EBF !important;
+  color: #5e93ca !important;
 }
 
 /* Override Mintlify's --primary-light in dark mode */
 .dark,
 [data-theme="dark"] {
-  --primary-light: #4a7ab5 !important;
-  --primary: #4a7ab5 !important;
-  --accent: #4a7ab5 !important;
+  --primary-light: #4075aa !important;
+  --primary: #4075aa !important;
+  --accent: #4075aa !important;
 }
 
 /* ============================================
@@ -221,14 +221,14 @@ a.link:hover,
    Selection — yellow in light, cream in dark
    ============================================ */
 ::selection {
-  background-color: #FFF39E;
-  color: #1E2030;
+  background-color: #fff39e;
+  color: #0e1216;
 }
 
 .dark ::selection,
 [data-theme="dark"] ::selection {
-  background-color: #E8E6E0;
-  color: #1E2030;
+  background-color: #f2eee7;
+  color: #0a0e11;
 }
 
 /* ============================================

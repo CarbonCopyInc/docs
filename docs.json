@@ -4,9 +4,9 @@
   "name": "Carbon Copy API",
   "description": "Programmatic access to Polymarket copy-trading. Manage portfolios, follow traders, and track orders via REST API.",
   "colors": {
-    "primary": "#1a3a5c",
-    "light": "#4a7ab5",
-    "dark": "#1a3a5c"
+    "primary": "#285e9f",
+    "light": "#4075aa",
+    "dark": "#285e9f"
   },
   "favicon": "/favicon.png",
   "logo": {
