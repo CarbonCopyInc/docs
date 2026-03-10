@@ -4,17 +4,28 @@
   "name": "Carbon Copy API",
   "description": "Programmatic access to Polymarket copy-trading. Manage portfolios, follow traders, and track orders via REST API.",
   "colors": {
-    "primary": "#1a3a5c",
-    "light": "#18E299",
-    "dark": "#0C8C5E"
+    "primary": "#285e9f",
+    "light": "#4075aa",
+    "dark": "#285e9f"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.png",
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg",
-    "href": "https://carboncopy.news"
+    "light": "/logo/light.png",
+    "dark": "/logo/dark.png",
+    "href": "https://carboncopy.inc"
+  },
+  "fonts": {
+    "family": "Geist",
+    "heading": {
+      "family": "Playfair Display",
+      "weight": 800
+    },
+    "body": {
+      "family": "Source Serif 4"
+    }
   },
   "styling": {
+    "eyebrows": "section",
     "codeblocks": {
       "theme": {
         "light": "github-light",
@@ -48,6 +59,12 @@
               "errors",
               "pagination"
             ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "mcp-server"
+            ]
           }
         ]
       },
@@ -78,7 +95,7 @@
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://carboncopy.news"
+      "href": "https://carboncopy.inc"
     }
   },
   "footer": {

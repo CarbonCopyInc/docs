@@ -7,83 +7,67 @@
  */
 
 /* ============================================
-   Google Fonts
-   ============================================ */
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Playfair+Display:wght@700;800;900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap');
-
-/* ============================================
    CSS Custom Properties — Light Mode
    ============================================ */
 :root {
-  /* Warm cream background — aged newspaper */
-  --cc-bg: oklch(0.985 0.008 85);
-  --cc-fg: oklch(0.18 0.01 250);
-  --cc-card: oklch(0.99 0.006 85);
-  --cc-border: oklch(0.85 0.012 80);
-  --cc-muted: oklch(0.45 0.01 250);
-  --cc-muted-bg: oklch(0.95 0.008 80);
-
-  /* Navy — classic financial press */
-  --cc-primary: oklch(0.48 0.12 255);
-  --cc-primary-fg: oklch(0.98 0.005 85);
-
-  /* Accent — logo green */
-  --cc-accent: #18E299;
-
-  /* Warm destructive — oxblood */
-  --cc-destructive: oklch(0.45 0.15 25);
+  --cc-bg: #fdfaf4;
+  --cc-fg: #0e1216;
+  --cc-card: #fefcf7;
+  --cc-border: #d2cdc5;
+  --cc-muted: #51565b;
+  --cc-muted-bg: #f1eee9;
+  --cc-primary: #285e9f;
+  --cc-primary-fg: #faf8f5;
 }
 
 /* ============================================
    CSS Custom Properties — Dark Mode
    ============================================ */
 .dark, [data-theme="dark"] {
-  /* Rich, warm dark — like a private club */
-  --cc-bg: oklch(0.16 0.01 250);
-  --cc-fg: oklch(0.92 0.008 80);
-  --cc-card: oklch(0.2 0.012 250);
-  --cc-border: oklch(0.3 0.015 250);
-  --cc-muted: oklch(0.65 0.01 80);
-  --cc-muted-bg: oklch(0.24 0.012 250);
+  --cc-bg: #0a0e11;
+  --cc-fg: #e7e4df;
+  --cc-card: #12171b;
+  --cc-border: #282f35;
+  --cc-muted: #928f88;
+  --cc-muted-bg: #1b2025;
+  --cc-primary: #4075aa;
+  --cc-primary-fg: #faf8f5;
+}
 
-  /* Lighter navy for dark mode */
-  --cc-primary: oklch(0.55 0.1 250);
-  --cc-primary-fg: oklch(0.98 0.005 85);
+/* Force dark mode primary/accent to navy, override Mintlify's green */
+.dark a,
+.dark .eyebrow,
+.dark [data-theme="dark"] a,
+[data-theme="dark"] a {
+  color: var(--cc-primary);
+}
 
-  /* Warm destructive */
-  --cc-destructive: oklch(0.6 0.18 25);
+.dark .eyebrow,
+[data-theme="dark"] .eyebrow {
+  color: #5e93ca !important;
+}
+
+/* Override Mintlify's --primary-light in dark mode */
+.dark,
+[data-theme="dark"] {
+  --primary-light: #4075aa !important;
+  --primary: #4075aa !important;
+  --accent: #4075aa !important;
 }
 
 /* ============================================
-   Global Typography
+   Typography tweaks (fonts loaded via docs.json)
    ============================================ */
-body {
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Headings — Playfair Display (bold serif, financial press) */
-h1, h2, h3,
-#page-title,
-.eyebrow + h1 {
-  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif !important;
-  font-weight: 800;
+h1 {
   letter-spacing: -0.02em;
 }
 
-h1 {
-  font-weight: 900;
-}
-
-/* Body text — slightly warm with Source Serif for long-form */
 .mdx-content p,
 .mdx-content li {
-  font-family: 'Source Serif 4', 'Geist', Georgia, serif;
   line-height: 1.7;
 }
 
-/* Code — Geist Mono */
+/* Code — Geist Mono (not available in docs.json fonts config) */
 code, pre, .code-block,
 [data-rehype-pretty-code-fragment] {
   font-family: 'Geist Mono', 'JetBrains Mono', 'Fira Code', monospace !important;
@@ -92,21 +76,25 @@ code, pre, .code-block,
 
 /* ============================================
    Background & Surface Colors
+   Force override on every possible container
    ============================================ */
+html,
 body,
+main,
+#__next,
 #navbar,
-#sidebar,
-#content-area,
-#body-content {
-  background-color: var(--cc-bg) !important;
-  color: var(--cc-fg);
-}
-
-/* Sidebar */
+#navbar-transition,
 #sidebar,
 #sidebar-content,
-#navigation-items {
+#navigation-items,
+#content-area,
+#content-container,
+#content-side-layout,
+#body-content,
+#table-of-contents-layout,
+[data-radix-scroll-area-viewport] {
   background-color: var(--cc-bg) !important;
+  color: var(--cc-fg);
 }
 
 /* Cards and elevated surfaces */
@@ -132,16 +120,10 @@ body,
   background-color: var(--cc-bg) !important;
 }
 
-/* CTA button — green accent */
+/* CTA button */
 #topbar-cta-button {
-  background-color: var(--cc-accent) !important;
-  color: #0a2a1a !important;
   font-weight: 600;
   border-radius: 0 !important;
-}
-
-#topbar-cta-button:hover {
-  opacity: 0.9;
 }
 
 /* ============================================
@@ -239,14 +221,14 @@ a.link:hover,
    Selection — yellow in light, cream in dark
    ============================================ */
 ::selection {
-  background-color: rgb(255, 243, 158);
-  color: oklch(0.18 0.01 250);
+  background-color: #fff39e;
+  color: #0e1216;
 }
 
 .dark ::selection,
 [data-theme="dark"] ::selection {
-  background-color: oklch(0.95 0.01 80);
-  color: oklch(0.18 0.01 250);
+  background-color: #f2eee7;
+  color: #0a0e11;
 }
 
 /* ============================================
@@ -282,10 +264,15 @@ button, .tryit-button {
 }
 
 /* ============================================
-   Table of Contents
+   Table of Contents — "On this page" sidebar
    ============================================ */
 #table-of-contents {
   border-left: 1px solid var(--cc-border) !important;
+  padding-left: 1rem !important;
+}
+
+#table-of-contents-content {
+  padding-left: 0.5rem !important;
 }
 
 .toc-item.active {
@@ -321,6 +308,14 @@ button, .tryit-button {
 .expandable,
 .accordion {
   border-radius: 0 !important;
+}
+
+/* ============================================
+   Sidebar — auto-expand API endpoint groups
+   ============================================ */
+#sidebar .sidebar-group[data-state="closed"] > [data-state="closed"] {
+  display: block !important;
+  height: auto !important;
 }
 
 /* ============================================

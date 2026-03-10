@@ -31,7 +31,7 @@ List endpoints return results in pages. Each response includes:
 **First page:**
 
 ```bash
-curl "https://carboncopy.news/api/v1/portfolio/history?limit=50" \
+curl "https://carboncopy.inc/api/v1/portfolio/history?limit=50" \
   -H "Authorization: Bearer $CC_API_KEY"
 ```
 
@@ -46,7 +46,7 @@ curl "https://carboncopy.news/api/v1/portfolio/history?limit=50" \
 **Next page** — pass `continueCursor` as `cursor`:
 
 ```bash
-curl "https://carboncopy.news/api/v1/portfolio/history?limit=50&cursor=eyJpZCI6Imsx..." \
+curl "https://carboncopy.inc/api/v1/portfolio/history?limit=50&cursor=eyJpZCI6Imsx..." \
   -H "Authorization: Bearer $CC_API_KEY"
 ```
 
@@ -94,7 +94,7 @@ def fetch_all(endpoint, api_key, **params):
 
 # Example
 trades = fetch_all(
-    "https://carboncopy.news/api/v1/portfolio/history",
+    "https://carboncopy.inc/api/v1/portfolio/history",
     api_key="cc_your_key_here",
     since=1741000000000,
 )
@@ -142,7 +142,7 @@ async function fetchAll<T>(
 
 // Example
 const trades = await fetchAll(
-  "https://carboncopy.news/api/v1/portfolio/history",
+  "https://carboncopy.inc/api/v1/portfolio/history",
   "cc_your_key_here",
   { since: 1741000000000 }
 );
@@ -159,7 +159,7 @@ Use `since` and `until` to fetch a specific window without iterating your entire
 NOW=$(date +%s%3N)
 SEVEN_DAYS_AGO=$((NOW - 7 * 24 * 60 * 60 * 1000))
 
-curl "https://carboncopy.news/api/v1/portfolio/history?since=${SEVEN_DAYS_AGO}&limit=100" \
+curl "https://carboncopy.inc/api/v1/portfolio/history?since=${SEVEN_DAYS_AGO}&limit=100" \
   -H "Authorization: Bearer $CC_API_KEY"
 ```
 
