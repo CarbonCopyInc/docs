@@ -15,12 +15,10 @@
     "href": "https://carboncopy.inc"
   },
   "fonts": {
+    "family": "Geist",
     "heading": {
       "family": "Playfair Display",
       "weight": 800
-    },
-    "body": {
-      "family": "Source Serif 4"
     }
   },
   "styling": {
@@ -46,44 +44,23 @@
           {
             "group": "Getting Started",
             "pages": [
-              {
-                "page": "index",
-                "icon": "house"
-              },
-              {
-                "page": "quickstart",
-                "icon": "rocket"
-              },
-              {
-                "page": "authentication",
-                "icon": "shield-halved"
-              }
+              "index",
+              "quickstart",
+              "authentication"
             ]
           },
           {
             "group": "Reference",
             "pages": [
-              {
-                "page": "rate-limits",
-                "icon": "gauge-high"
-              },
-              {
-                "page": "errors",
-                "icon": "triangle-exclamation"
-              },
-              {
-                "page": "pagination",
-                "icon": "arrow-right"
-              }
+              "rate-limits",
+              "errors",
+              "pagination"
             ]
           },
           {
             "group": "Integrations",
             "pages": [
-              {
-                "page": "mcp-server",
-                "icon": "robot"
-              }
+              "mcp-server"
             ]
           }
         ]
