@@ -1,11 +1,11 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Carbon Copy API",
+    "title": "Carboncopy API",
     "version": "1.0.0",
-    "description": "Programmatic access to Carbon Copy's Polymarket copy-trading platform. Follow traders, manage your portfolio, and automate your prediction market strategy.",
+    "description": "Programmatic access to Carboncopy's Polymarket copy-trading platform. Follow traders, manage your portfolio, and automate your prediction market strategy.",
     "contact": {
-      "name": "Carbon Copy Support",
+      "name": "Carboncopy Support",
       "email": "support@carboncopy.inc",
       "url": "https://carboncopy.inc"
     }
@@ -454,7 +454,7 @@
         "properties": {
           "userId": {
             "type": "string",
-            "description": "Internal Carbon Copy user ID.",
+            "description": "Internal Carboncopy user ID.",
             "example": "user_abc123"
           },
           "walletAddress": {
@@ -1487,7 +1487,7 @@
       "get": {
         "operationId": "getAccount",
         "summary": "Get account info",
-        "description": "Returns information about the authenticated user's Carbon Copy account.",
+        "description": "Returns information about the authenticated user's Carboncopy account.",
         "tags": [
           "Account"
         ],
@@ -1539,7 +1539,7 @@
     },
     {
       "name": "Account",
-      "description": "Your Carbon Copy account information."
+      "description": "Your Carboncopy account information."
     }
   ]
 }
