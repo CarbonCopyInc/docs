@@ -90,16 +90,24 @@ CARBONCOPY_API_KEY=cc_... npx @carbon-copy/mcp
 | `get_portfolio_history` | Paginated trade history with date filtering |
 | `get_positions` | Currently open positions |
 
-### Traders
+### Trader Discovery
 
 | Tool | Description |
 |---|---|
-| `list_traders` | All followed traders with stats |
+| `discover_traders` | Search/filter traders by profit, ROI, win rate, volume, followers |
+| `get_trader_performance` | Detailed performance analytics and P&L history for any trader |
+
+### Follow Management
+
+| Tool | Description |
+|---|---|
+| `list_traders` | All followed traders with copy settings and stats |
 | `follow_trader` | Start following a new trader |
-| `get_trader` | Single trader details |
+| `get_trader` | Details for a single followed trader |
 | `update_trader` | Change copy percentage, max amount, notifications |
+| `batch_update_traders` | Update up to 100 followed traders in one call |
 | `unfollow_trader` | Stop following a trader |
-| `pause_trader` | Temporarily pause copy-trading |
+| `pause_trader` | Temporarily pause copy-trading without unfollowing |
 | `resume_trader` | Resume paused copy-trading |
 
 ### Orders & Account

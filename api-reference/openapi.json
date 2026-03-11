@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Carbon Copy API",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "Programmatic access to Carbon Copy's Polymarket copy-trading platform. Follow traders, manage your portfolio, and automate your prediction market strategy.",
     "contact": {
       "name": "Carbon Copy Support",
@@ -21,22 +21,17 @@
       "ApiKeyAuth": {
         "type": "http",
         "scheme": "bearer",
-        "description": "API key in the format `cc_<64 hex characters>`. Obtain from the Dashboard under Settings \u2192 API Keys."
+        "description": "API key in the format `cc_<64 hex characters>`. Obtain from the Dashboard under Settings → API Keys."
       }
     },
     "schemas": {
       "Error": {
         "type": "object",
-        "required": [
-          "error"
-        ],
+        "required": ["error"],
         "properties": {
           "error": {
             "type": "object",
-            "required": [
-              "code",
-              "message"
-            ],
+            "required": ["code", "message"],
             "properties": {
               "code": {
                 "type": "string",
@@ -60,46 +55,16 @@
           }
         }
       },
-      "PaginationQuery": {
-        "type": "object",
-        "properties": {
-          "limit": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 100,
-            "default": 50,
-            "description": "Number of records to return per page."
-          },
-          "cursor": {
-            "type": "string",
-            "description": "Opaque cursor from a previous response's `continueCursor` field."
-          },
-          "since": {
-            "type": "integer",
-            "description": "Filter to records created at or after this Unix timestamp (milliseconds)."
-          },
-          "until": {
-            "type": "integer",
-            "description": "Filter to records created before this Unix timestamp (milliseconds)."
-          }
-        }
-      },
       "PaginatedResponse": {
         "type": "object",
-        "required": [
-          "page",
-          "isDone"
-        ],
+        "required": ["page", "isDone"],
         "properties": {
           "page": {
             "type": "array",
             "items": {}
           },
           "continueCursor": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": ["string", "null"],
             "description": "Pass this value as `cursor` in your next request to fetch the following page. `null` when no more pages exist."
           },
           "isDone": {
@@ -110,22 +75,16 @@
       },
       "HealthResponse": {
         "type": "object",
-        "required": [
-          "status",
-          "version",
-          "timestamp"
-        ],
+        "required": ["status"],
         "properties": {
           "status": {
             "type": "string",
-            "enum": [
-              "ok"
-            ],
+            "enum": ["ok"],
             "example": "ok"
           },
           "version": {
             "type": "string",
-            "example": "1.0.0"
+            "example": "2.0.0"
           },
           "timestamp": {
             "type": "integer",
@@ -136,30 +95,31 @@
       },
       "PortfolioSummary": {
         "type": "object",
-        "required": [
-          "totalValue",
-          "activePositions",
-          "totalPnL",
-          "totalPnLPercent",
-          "winRate",
-          "totalTrades",
-          "traders"
-        ],
         "properties": {
+          "balance": {
+            "type": "number",
+            "description": "Available USDC balance in the proxy wallet.",
+            "example": 245.50
+          },
+          "positionsValue": {
+            "type": "number",
+            "description": "Current mark-to-market value of all open positions in USDC.",
+            "example": 89.30
+          },
+          "unrealisedPnl": {
+            "type": "number",
+            "description": "Unrealised profit/loss on open positions in USDC.",
+            "example": 4.10
+          },
           "totalValue": {
             "type": "number",
-            "description": "Current portfolio value in USDC.",
-            "example": 5420.75
-          },
-          "activePositions": {
-            "type": "integer",
-            "description": "Number of currently open copy-trade positions.",
-            "example": 12
+            "description": "balance + positionsValue.",
+            "example": 334.80
           },
           "totalPnL": {
             "type": "number",
-            "description": "Lifetime profit/loss in USDC.",
-            "example": 420.5
+            "description": "Lifetime realised profit/loss in USDC.",
+            "example": 38.20
           },
           "totalPnLPercent": {
             "type": "number",
@@ -176,35 +136,26 @@
             "description": "Total number of copy trades executed.",
             "example": 48
           },
-          "traders": {
-            "type": "array",
-            "description": "Summary stats for each followed trader.",
-            "items": {
-              "$ref": "#/components/schemas/TraderSummary"
-            }
+          "activePositions": {
+            "type": "integer",
+            "description": "Number of currently open copy-trade positions.",
+            "example": 12
           }
         }
       },
       "TraderSummary": {
         "type": "object",
-        "required": [
-          "walletAddress",
-          "copyTradingEnabled",
-          "copyPercentage"
-        ],
+        "required": ["walletAddress", "copyTradingEnabled", "copyPercentage"],
         "properties": {
           "walletAddress": {
             "type": "string",
             "description": "Trader's Ethereum wallet address.",
             "example": "0xAbCd1234..."
           },
-          "displayName": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Optional display name for the trader.",
-            "example": "alpha_trader"
+          "username": {
+            "type": ["string", "null"],
+            "description": "Trader's display name.",
+            "example": "sharptrader"
           },
           "copyTradingEnabled": {
             "type": "boolean",
@@ -218,10 +169,7 @@
             "example": 25
           },
           "maxCopyAmount": {
-            "type": [
-              "number",
-              "null"
-            ],
+            "type": ["number", "null"],
             "description": "Maximum USDC to deploy per copied trade. `null` means no cap.",
             "example": 500
           },
@@ -239,15 +187,13 @@
       },
       "TraderDetail": {
         "allOf": [
-          {
-            "$ref": "#/components/schemas/TraderSummary"
-          },
+          { "$ref": "#/components/schemas/TraderSummary" },
           {
             "type": "object",
             "properties": {
               "notificationsEnabled": {
                 "type": "boolean",
-                "description": "Whether push/email notifications are enabled for this trader's activity."
+                "description": "Whether notifications are enabled for this trader's activity."
               },
               "followedAt": {
                 "type": "integer",
@@ -257,342 +203,174 @@
               "recentTrades": {
                 "type": "array",
                 "description": "The 10 most recent trades by this trader.",
-                "items": {
-                  "$ref": "#/components/schemas/CopyTrade"
-                }
+                "items": { "$ref": "#/components/schemas/CopyTrade" }
               }
             }
           }
         ]
       },
-      "CopyTrade": {
+      "DiscoveredTrader": {
         "type": "object",
-        "required": [
-          "id",
-          "traderWallet",
-          "marketId",
-          "side",
-          "amount",
-          "status",
-          "createdAt"
-        ],
         "properties": {
-          "id": {
+          "walletAddress": {
             "type": "string",
-            "description": "Convex document ID.",
-            "example": "k17abc123def456"
-          },
-          "traderWallet": {
-            "type": "string",
-            "description": "Wallet address of the trader being copied.",
             "example": "0xAbCd1234..."
           },
-          "marketId": {
-            "type": "string",
-            "description": "Polymarket condition/market ID.",
-            "example": "0x1234abcd..."
+          "username": {
+            "type": ["string", "null"],
+            "example": "sharptrader"
           },
+          "totalProfit": {
+            "type": "number",
+            "description": "Lifetime realised profit in USDC.",
+            "example": 4200.0
+          },
+          "totalVolume": {
+            "type": "number",
+            "description": "Lifetime trading volume in USDC.",
+            "example": 32000.0
+          },
+          "roi": {
+            "type": "number",
+            "description": "Return on investment (decimal, e.g. 0.131 = 13.1%).",
+            "example": 0.131
+          },
+          "winRate": {
+            "type": "number",
+            "description": "Fraction of resolved positions that were profitable (0–1).",
+            "example": 0.71
+          },
+          "followers": {
+            "type": "integer",
+            "description": "Number of Carbon Copy users currently copying this trader.",
+            "example": 48
+          }
+        }
+      },
+      "TraderPerformance": {
+        "type": "object",
+        "properties": {
+          "walletAddress": { "type": "string", "example": "0xAbCd1234..." },
+          "username": { "type": ["string", "null"], "example": "sharptrader" },
+          "totalProfit": { "type": "number", "example": 4200.0 },
+          "totalVolume": { "type": "number", "example": 32000.0 },
+          "roi": { "type": "number", "example": 0.131 },
+          "maxDrawdown": {
+            "type": "number",
+            "description": "Maximum peak-to-trough drawdown (decimal).",
+            "example": 0.08
+          },
+          "sharpe": {
+            "type": "number",
+            "description": "Sharpe ratio based on P&L history.",
+            "example": 1.42
+          },
+          "pnlHistory": {
+            "type": "array",
+            "description": "Normalized daily P&L time series.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": { "type": "string", "example": "2025-01-01" },
+                "pnl": { "type": "number", "example": 120.0 }
+              }
+            }
+          }
+        }
+      },
+      "PnlByTraderItem": {
+        "type": "object",
+        "properties": {
+          "traderWallet": { "type": "string", "example": "0xAbCd1234..." },
+          "username": { "type": ["string", "null"], "example": "cryptowhale" },
+          "realizedPnl": {
+            "type": "number",
+            "description": "Total realised P&L from trades copied from this trader.",
+            "example": 24.10
+          },
+          "totalVolume": {
+            "type": "number",
+            "description": "Total USDC deployed copying this trader.",
+            "example": 310.0
+          },
+          "tradeCount": {
+            "type": "integer",
+            "example": 12
+          }
+        }
+      },
+      "CopyTrade": {
+        "type": "object",
+        "required": ["id", "traderWallet", "marketId", "side", "amount", "status", "createdAt"],
+        "properties": {
+          "id": { "type": "string", "example": "k17abc123def456" },
+          "traderWallet": { "type": "string", "example": "0xAbCd1234..." },
+          "marketId": { "type": "string", "example": "0x1234abcd..." },
           "marketQuestion": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Human-readable market question.",
+            "type": ["string", "null"],
             "example": "Will BTC exceed $100k by end of 2025?"
           },
           "side": {
             "type": "string",
-            "enum": [
-              "YES",
-              "NO"
-            ],
+            "enum": ["YES", "NO"],
             "description": "Which outcome was purchased."
           },
           "amount": {
             "type": "number",
-            "description": "USDC amount deployed in this trade.",
+            "description": "USDC amount deployed.",
             "example": 50.0
           },
           "price": {
             "type": "number",
-            "description": "Average fill price (0\u20131).",
+            "description": "Average fill price (0–1).",
             "example": 0.62
           },
           "pnl": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "Realized P&L in USDC. `null` if the market is still open.",
+            "type": "number",
+            "description": "Realised P&L in USDC. `0` if not yet realized.",
             "example": 12.5
           },
           "status": {
             "type": "string",
-            "enum": [
-              "open",
-              "resolved_win",
-              "resolved_loss",
-              "cancelled"
-            ],
+            "enum": ["open", "executed", "filled", "resolved_win", "resolved_loss", "cancelled"],
             "description": "Current status of this copy trade."
-          },
-          "orderId": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Associated order ID, if an order was placed.",
-            "example": "k17xyz789"
           },
           "createdAt": {
             "type": "integer",
-            "description": "Unix timestamp (ms) when the trade was copied.",
+            "description": "Unix timestamp (ms).",
             "example": 1741550000000
-          },
-          "resolvedAt": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Unix timestamp (ms) when the market resolved. `null` if still open."
           }
         }
       },
       "Order": {
         "type": "object",
-        "required": [
-          "id",
-          "marketId",
-          "side",
-          "amount",
-          "status",
-          "createdAt"
-        ],
+        "required": ["id", "marketId", "side", "amount", "status", "createdAt"],
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Convex document ID.",
-            "example": "k17xyz789"
-          },
-          "marketId": {
-            "type": "string",
-            "description": "Polymarket condition/market ID."
-          },
-          "marketQuestion": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Human-readable market question."
-          },
-          "side": {
-            "type": "string",
-            "enum": [
-              "YES",
-              "NO"
-            ]
-          },
-          "amount": {
-            "type": "number",
-            "description": "USDC amount requested.",
-            "example": 50.0
-          },
-          "filledAmount": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "USDC amount actually filled.",
-            "example": 50.0
-          },
-          "price": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "Average fill price (0\u20131).",
-            "example": 0.62
-          },
+          "id": { "type": "string", "example": "k17xyz789" },
+          "marketId": { "type": "string" },
+          "marketQuestion": { "type": ["string", "null"] },
+          "side": { "type": "string", "enum": ["YES", "NO"] },
+          "amount": { "type": "number", "example": 50.0 },
+          "filledAmount": { "type": ["number", "null"], "example": 50.0 },
+          "price": { "type": ["number", "null"], "example": 0.62 },
           "status": {
             "type": "string",
-            "enum": [
-              "filled",
-              "pending",
-              "cancelled",
-              "failed"
-            ],
-            "description": "Current order status."
+            "enum": ["filled", "pending", "cancelled", "failed"]
           },
-          "createdAt": {
-            "type": "integer",
-            "description": "Unix timestamp (ms) when the order was created.",
-            "example": 1741550000000
-          },
-          "filledAt": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Unix timestamp (ms) when the order was filled."
-          },
-          "errorMessage": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Human-readable error, populated when status is `failed`."
-          }
+          "createdAt": { "type": "integer", "example": 1741550000000 },
+          "filledAt": { "type": ["integer", "null"] },
+          "errorMessage": { "type": ["string", "null"] }
         }
       },
       "Account": {
         "type": "object",
-        "required": [
-          "userId",
-          "walletAddress",
-          "createdAt"
-        ],
+        "required": ["userId", "walletAddress", "createdAt"],
         "properties": {
-          "userId": {
-            "type": "string",
-            "description": "Internal Carbon Copy user ID.",
-            "example": "user_abc123"
-          },
-          "walletAddress": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "User's connected Polymarket wallet address.",
-            "example": "0xDead1234..."
-          },
-          "email": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "User's email address, if provided.",
-            "example": "trader@example.com"
-          },
-          "copyTradingEnabled": {
-            "type": "boolean",
-            "description": "Global kill-switch for copy trading.",
-            "example": true
-          },
-          "createdAt": {
-            "type": "integer",
-            "description": "Unix timestamp (ms) of account creation.",
-            "example": 1740000000000
-          }
-        }
-      },
-      "ApiKey": {
-        "type": "object",
-        "required": [
-          "keyId",
-          "name",
-          "scopes",
-          "createdAt"
-        ],
-        "properties": {
-          "keyId": {
-            "type": "string",
-            "description": "Unique ID for this key.",
-            "example": "key_abc123"
-          },
-          "name": {
-            "type": "string",
-            "description": "Human-readable label.",
-            "example": "My trading bot"
-          },
-          "scopes": {
-            "$ref": "#/components/schemas/KeyScopes"
-          },
-          "createdAt": {
-            "type": "integer",
-            "description": "Unix timestamp (ms) of key creation.",
-            "example": 1741000000000
-          },
-          "expiresAt": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Unix timestamp (ms) of key expiry. `null` = never expires."
-          },
-          "lastUsedAt": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Unix timestamp (ms) when the key was last used."
-          }
-        }
-      },
-      "ApiKeyWithSecret": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/ApiKey"
-          },
-          {
-            "type": "object",
-            "required": [
-              "secret"
-            ],
-            "properties": {
-              "secret": {
-                "type": "string",
-                "description": "The full API key secret (`cc_<64 hex chars>`). Shown **once** \u2014 store it securely.",
-                "example": "cc_a1b2c3d4e5f6..."
-              }
-            }
-          }
-        ]
-      },
-      "KeyScopes": {
-        "type": "object",
-        "properties": {
-          "portfolio": {
-            "type": "string",
-            "enum": [
-              "none",
-              "read"
-            ],
-            "default": "none"
-          },
-          "traders": {
-            "type": "string",
-            "enum": [
-              "none",
-              "read",
-              "write"
-            ],
-            "default": "none"
-          },
-          "orders": {
-            "type": "string",
-            "enum": [
-              "none",
-              "read",
-              "write"
-            ],
-            "default": "none"
-          },
-          "markets": {
-            "type": "string",
-            "enum": [
-              "none",
-              "read"
-            ],
-            "default": "none"
-          },
-          "account": {
-            "type": "string",
-            "enum": [
-              "none",
-              "read"
-            ],
-            "default": "none"
-          }
+          "userId": { "type": "string", "example": "user_abc123" },
+          "walletAddress": { "type": ["string", "null"], "example": "0xDead1234..." },
+          "email": { "type": ["string", "null"], "example": "trader@example.com" },
+          "copyTradingEnabled": { "type": "boolean", "example": true },
+          "createdAt": { "type": "integer", "example": 1740000000000 }
         }
       }
     },
@@ -601,15 +379,8 @@
         "description": "Missing or invalid authentication credentials.",
         "content": {
           "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            },
-            "example": {
-              "error": {
-                "code": "unauthorized",
-                "message": "Invalid or missing API key."
-              }
-            }
+            "schema": { "$ref": "#/components/schemas/Error" },
+            "example": { "error": { "code": "unauthorized", "message": "Invalid or missing API key." } }
           }
         }
       },
@@ -617,15 +388,8 @@
         "description": "Authenticated but insufficient permissions (wrong scope).",
         "content": {
           "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            },
-            "example": {
-              "error": {
-                "code": "forbidden",
-                "message": "This key does not have the required scope."
-              }
-            }
+            "schema": { "$ref": "#/components/schemas/Error" },
+            "example": { "error": { "code": "forbidden", "message": "This key does not have the required scope." } }
           }
         }
       },
@@ -633,15 +397,8 @@
         "description": "The requested resource does not exist.",
         "content": {
           "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            },
-            "example": {
-              "error": {
-                "code": "not_found",
-                "message": "Resource not found."
-              }
-            }
+            "schema": { "$ref": "#/components/schemas/Error" },
+            "example": { "error": { "code": "not_found", "message": "Resource not found." } }
           }
         }
       },
@@ -650,61 +407,41 @@
         "headers": {
           "Retry-After": {
             "description": "Seconds to wait before retrying.",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          "X-RateLimit-Limit": {
-            "description": "Request limit for this endpoint tier.",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          "X-RateLimit-Remaining": {
-            "description": "Remaining requests in the current window.",
-            "schema": {
-              "type": "integer"
-            }
+            "schema": { "type": "integer" }
           }
         },
         "content": {
           "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            },
-            "example": {
-              "error": {
-                "code": "rate_limited",
-                "message": "Rate limit exceeded. Retry after 30 seconds."
-              }
-            }
+            "schema": { "$ref": "#/components/schemas/Error" },
+            "example": { "error": { "code": "rate_limited", "message": "Rate limit exceeded. Retry after 30 seconds." } }
           }
         }
       }
     }
   },
+  "tags": [
+    { "name": "Health", "description": "Service health and status." },
+    { "name": "Portfolio", "description": "Portfolio summary, positions, trade history, and P&L." },
+    { "name": "Follow Management", "description": "Follow, configure, and manage the traders you copy. All routes live under `/portfolio/traders`." },
+    { "name": "Trader Discovery", "description": "Search and filter traders on the platform. Routes under `/traders`." },
+    { "name": "Orders", "description": "Inspect orders placed by your copy-trading bot." },
+    { "name": "Markets", "description": "Market data — prices and token info." },
+    { "name": "Account", "description": "Your Carbon Copy account information." }
+  ],
   "paths": {
     "/api/v1/health": {
       "get": {
         "operationId": "getHealth",
         "summary": "Health check",
-        "description": "Returns API health status. No authentication required. Use this to verify connectivity.",
-        "tags": [
-          "Health"
-        ],
+        "description": "Returns API health status. No authentication required.",
+        "tags": ["Health"],
         "responses": {
           "200": {
             "description": "API is healthy.",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HealthResponse"
-                },
-                "example": {
-                  "status": "ok",
-                  "version": "1.0.0",
-                  "timestamp": 1741600000000
-                }
+                "schema": { "$ref": "#/components/schemas/HealthResponse" },
+                "example": { "status": "ok", "version": "2.0.0", "timestamp": 1741600000000 }
               }
             }
           }
@@ -715,35 +452,21 @@
       "get": {
         "operationId": "getPortfolio",
         "summary": "Get portfolio summary",
-        "description": "Returns an aggregated summary of your copy-trading portfolio including total value, P&L, win rate, and per-trader breakdowns.",
-        "tags": [
-          "Portfolio"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
+        "description": "Returns an aggregated summary of your copy-trading portfolio including live wallet balance, open positions value, unrealised P&L, and lifetime stats.",
+        "tags": ["Portfolio"],
+        "security": [{ "ApiKeyAuth": [] }],
         "responses": {
           "200": {
             "description": "Portfolio summary.",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PortfolioSummary"
-                }
+                "schema": { "$ref": "#/components/schemas/PortfolioSummary" }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          }
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
         }
       }
     },
@@ -751,51 +474,14 @@
       "get": {
         "operationId": "getPortfolioHistory",
         "summary": "List copy trade history",
-        "description": "Returns a paginated list of all copy trades (open and resolved). Use cursor-based pagination to iterate through large result sets.",
-        "tags": [
-          "Portfolio"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
+        "description": "Returns a paginated list of all copy trades. Every item includes a `pnl` field (`0` when not yet realized).",
+        "tags": ["Portfolio"],
+        "security": [{ "ApiKeyAuth": [] }],
         "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Number of records per page (1\u2013100, default 50).",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 50
-            }
-          },
-          {
-            "name": "cursor",
-            "in": "query",
-            "description": "Pagination cursor from a previous response.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "since",
-            "in": "query",
-            "description": "Return trades created at or after this Unix timestamp (ms).",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "until",
-            "in": "query",
-            "description": "Return trades created before this Unix timestamp (ms).",
-            "schema": {
-              "type": "integer"
-            }
-          }
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 } },
+          { "name": "cursor", "in": "query", "schema": { "type": "string" } },
+          { "name": "since", "in": "query", "description": "Unix ms — filter trades on or after this time.", "schema": { "type": "integer" } },
+          { "name": "until", "in": "query", "description": "Unix ms — filter trades before this time.", "schema": { "type": "integer" } }
         ],
         "responses": {
           "200": {
@@ -804,34 +490,16 @@
               "application/json": {
                 "schema": {
                   "allOf": [
-                    {
-                      "$ref": "#/components/schemas/PaginatedResponse"
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "page": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/CopyTrade"
-                          }
-                        }
-                      }
-                    }
+                    { "$ref": "#/components/schemas/PaginatedResponse" },
+                    { "type": "object", "properties": { "page": { "type": "array", "items": { "$ref": "#/components/schemas/CopyTrade" } } } }
                   ]
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          }
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
         }
       }
     },
@@ -839,47 +507,12 @@
       "get": {
         "operationId": "getPortfolioPositions",
         "summary": "List open positions",
-        "description": "Returns a paginated list of currently open copy-trade positions (status = `open`).",
-        "tags": [
-          "Portfolio"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
+        "description": "Returns a paginated list of currently open copy-trade positions.",
+        "tags": ["Portfolio"],
+        "security": [{ "ApiKeyAuth": [] }],
         "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 50
-            }
-          },
-          {
-            "name": "cursor",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "since",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "until",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            }
-          }
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 } },
+          { "name": "cursor", "in": "query", "schema": { "type": "string" } }
         ],
         "responses": {
           "200": {
@@ -888,128 +521,139 @@
               "application/json": {
                 "schema": {
                   "allOf": [
-                    {
-                      "$ref": "#/components/schemas/PaginatedResponse"
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "page": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/CopyTrade"
-                          }
-                        }
-                      }
-                    }
+                    { "$ref": "#/components/schemas/PaginatedResponse" },
+                    { "type": "object", "properties": { "page": { "type": "array", "items": { "$ref": "#/components/schemas/CopyTrade" } } } }
                   ]
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          }
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
         }
       }
     },
-    "/api/v1/traders": {
-      "get": {
-        "operationId": "listTraders",
-        "summary": "List followed traders",
-        "description": "Returns all traders you currently follow, including their copy-trading settings and performance stats.",
-        "tags": [
-          "Traders"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of followed traders.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "traders"
-                  ],
-                  "properties": {
-                    "traders": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/TraderSummary"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          }
-        }
-      },
+    "/api/v1/portfolio/positions/close": {
       "post": {
-        "operationId": "followTrader",
-        "summary": "Follow a trader",
-        "description": "Start copy-trading a new wallet address. Returns `409 Conflict` if you are already following this trader.",
-        "tags": [
-          "Traders"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
+        "operationId": "closePosition",
+        "summary": "Close a position",
+        "description": "Sell all shares in an open position at the current market price.",
+        "tags": ["Portfolio"],
+        "security": [{ "ApiKeyAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "walletAddress",
-                  "copyPercentage"
-                ],
+                "required": ["positionId", "marketSlug", "direction", "shares"],
                 "properties": {
-                  "walletAddress": {
-                    "type": "string",
-                    "description": "Ethereum wallet address to follow.",
-                    "example": "0xAbCd1234..."
-                  },
-                  "copyPercentage": {
-                    "type": "number",
-                    "minimum": 0,
-                    "maximum": 100,
-                    "description": "Percentage of each trade to copy.",
-                    "example": 25
-                  },
-                  "maxCopyAmount": {
-                    "type": "number",
-                    "description": "Maximum USDC to deploy per trade. Omit for no cap.",
-                    "example": 500
-                  },
-                  "notificationsEnabled": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Whether to receive notifications for this trader's activity."
+                  "positionId": { "type": "string", "description": "Convex document ID of the position." },
+                  "marketSlug": { "type": "string", "example": "will-x-happen" },
+                  "direction": { "type": "string", "example": "YES" },
+                  "shares": { "type": "number", "description": "Number of shares to sell.", "example": 15.5 },
+                  "outcome": { "type": "string", "description": "Optional outcome override.", "example": "YES" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Position closed successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true }
                   }
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing or invalid fields.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/api/v1/portfolio/pnl-by-trader": {
+      "get": {
+        "operationId": "getPnlByTrader",
+        "summary": "P&L breakdown by trader",
+        "description": "Returns realised P&L and volume grouped by each copied trader.",
+        "tags": ["Portfolio"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "P&L breakdown.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "breakdown": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/PnlByTraderItem" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/api/v1/portfolio/traders": {
+      "get": {
+        "operationId": "listFollowedTraders",
+        "summary": "List followed traders",
+        "description": "Returns all traders you currently follow, including copy settings and performance stats.",
+        "tags": ["Follow Management"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Followed traders.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "traders": { "type": "array", "items": { "$ref": "#/components/schemas/TraderSummary" } }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      },
+      "post": {
+        "operationId": "followTrader",
+        "summary": "Follow a trader",
+        "description": "Start copy-trading a new wallet. Returns `409 Conflict` if already following.",
+        "tags": ["Follow Management"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["walletAddress", "copyPercentage"],
+                "properties": {
+                  "walletAddress": { "type": "string", "example": "0xAbCd1234..." },
+                  "copyPercentage": { "type": "number", "minimum": 0, "maximum": 100, "example": 25 },
+                  "maxCopyAmount": { "type": "number", "description": "Max USDC per trade. Omit for no cap.", "example": 500 },
+                  "notificationsEnabled": { "type": "boolean", "default": true }
                 }
               }
             }
@@ -1017,140 +661,55 @@
         },
         "responses": {
           "201": {
-            "description": "Trader followed successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TraderDetail"
-                }
-              }
-            }
+            "description": "Trader followed.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TraderDetail" } } }
           },
-          "400": {
-            "description": "Invalid request body.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
+          "400": { "description": "Invalid request.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
           "409": {
             "description": "Already following this trader.",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                },
-                "example": {
-                  "error": {
-                    "code": "conflict",
-                    "message": "You are already following this trader."
-                  }
-                }
+                "schema": { "$ref": "#/components/schemas/Error" },
+                "example": { "error": { "code": "conflict", "message": "You are already following this trader." } }
               }
             }
           },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          }
+          "429": { "$ref": "#/components/responses/RateLimited" }
         }
       }
     },
-    "/api/v1/traders/{wallet}": {
-      "parameters": [
-        {
-          "name": "wallet",
-          "in": "path",
-          "required": true,
-          "description": "Trader's Ethereum wallet address (full or prefix match).",
-          "schema": {
-            "type": "string",
-            "example": "0xAbCd1234..."
-          }
-        }
-      ],
-      "get": {
-        "operationId": "getTrader",
-        "summary": "Get trader details",
-        "description": "Returns detailed information for a single followed trader, including recent trades.",
-        "tags": [
-          "Traders"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Trader details.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TraderDetail"
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          }
-        }
-      },
+    "/api/v1/portfolio/traders/batch": {
       "patch": {
-        "operationId": "updateTrader",
-        "summary": "Update follow settings",
-        "description": "Update copy-trading settings for a followed trader. All fields are optional; only provided fields are updated.",
-        "tags": [
-          "Traders"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
+        "operationId": "batchUpdateTraders",
+        "summary": "Batch update followed traders",
+        "description": "Update copy settings for up to 100 followed traders in a single request.",
+        "tags": ["Follow Management"],
+        "security": [{ "ApiKeyAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": ["updates"],
                 "properties": {
-                  "copyPercentage": {
-                    "type": "number",
-                    "minimum": 0,
-                    "maximum": 100
-                  },
-                  "maxCopyAmount": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Set to `null` to remove the cap."
-                  },
-                  "notificationsEnabled": {
-                    "type": "boolean"
-                  },
-                  "copyTradingEnabled": {
-                    "type": "boolean",
-                    "description": "Enable or disable copy trading for this specific trader."
+                  "updates": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "items": {
+                      "type": "object",
+                      "required": ["walletAddress"],
+                      "properties": {
+                        "walletAddress": { "type": "string", "example": "0xAbCd1234..." },
+                        "copyPercentage": { "type": "number", "minimum": 0, "maximum": 100 },
+                        "maxCopyAmount": { "type": ["number", "null"] },
+                        "notificationsEnabled": { "type": "boolean" },
+                        "copyTradingEnabled": { "type": "boolean" }
+                      }
+                    }
                   }
                 }
               }
@@ -1159,178 +718,212 @@
         },
         "responses": {
           "200": {
-            "description": "Updated trader settings.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TraderDetail"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request body.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          }
-        }
-      },
-      "delete": {
-        "operationId": "unfollowTrader",
-        "summary": "Unfollow a trader",
-        "description": "Stop copy-trading this wallet. Existing open positions are **not** automatically closed.",
-        "tags": [
-          "Traders"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Trader unfollowed.",
+            "description": "Results for each update in the batch.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "walletAddress": { "type": "string" },
+                          "success": { "type": "boolean" },
+                          "error": { "type": "string" }
+                        }
+                      }
                     }
                   }
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          }
+          "400": { "description": "Invalid request.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
         }
       }
     },
-    "/api/v1/traders/{wallet}/pause": {
-      "post": {
-        "operationId": "pauseTrader",
-        "summary": "Pause copy trading",
-        "description": "Temporarily pause copy trading for a specific trader. New trades from this trader will be ignored until resumed.",
-        "tags": [
-          "Traders"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "wallet",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+    "/api/v1/portfolio/traders/{wallet}": {
+      "parameters": [
+        {
+          "name": "wallet",
+          "in": "path",
+          "required": true,
+          "description": "Trader's Ethereum wallet address.",
+          "schema": { "type": "string", "example": "0xAbCd1234..." }
+        }
+      ],
+      "get": {
+        "operationId": "getFollowedTrader",
+        "summary": "Get followed trader",
+        "description": "Returns detailed info for a single followed trader including recent trades.",
+        "tags": ["Follow Management"],
+        "security": [{ "ApiKeyAuth": [] }],
         "responses": {
-          "200": {
-            "description": "Copy trading paused.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TraderDetail"
+          "200": { "description": "Trader details.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TraderDetail" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      },
+      "patch": {
+        "operationId": "updateFollowedTrader",
+        "summary": "Update follow settings",
+        "description": "Update copy-trading settings. All fields are optional — only provided fields are changed.",
+        "tags": ["Follow Management"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "copyPercentage": { "type": "number", "minimum": 0, "maximum": 100 },
+                  "maxCopyAmount": { "type": ["number", "null"], "description": "Set to `null` to remove the cap." },
+                  "notificationsEnabled": { "type": "boolean" },
+                  "copyTradingEnabled": { "type": "boolean" }
                 }
               }
             }
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
           }
+        },
+        "responses": {
+          "200": { "description": "Updated trader.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TraderDetail" } } } },
+          "400": { "description": "Invalid request.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      },
+      "delete": {
+        "operationId": "unfollowTrader",
+        "summary": "Unfollow a trader",
+        "description": "Stop copy-trading this wallet. Existing open positions are **not** automatically closed.",
+        "tags": ["Follow Management"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Trader unfollowed.",
+            "content": { "application/json": { "schema": { "type": "object", "properties": { "success": { "type": "boolean", "example": true } } } } }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
         }
       }
     },
-    "/api/v1/traders/{wallet}/resume": {
+    "/api/v1/portfolio/traders/{wallet}/pause": {
+      "post": {
+        "operationId": "pauseTrader",
+        "summary": "Pause copy trading",
+        "description": "Temporarily pause copy trading for a specific trader without unfollowing.",
+        "tags": ["Follow Management"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "parameters": [
+          { "name": "wallet", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Copy trading paused.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TraderDetail" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/api/v1/portfolio/traders/{wallet}/resume": {
       "post": {
         "operationId": "resumeTrader",
         "summary": "Resume copy trading",
         "description": "Resume copy trading for a previously paused trader.",
-        "tags": [
-          "Traders"
+        "tags": ["Follow Management"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "parameters": [
+          { "name": "wallet", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
-        "security": [
+        "responses": {
+          "200": { "description": "Copy trading resumed.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TraderDetail" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/api/v1/traders": {
+      "get": {
+        "operationId": "discoverTraders",
+        "summary": "Discover traders",
+        "description": "Search and filter traders on the platform. Use this to find traders worth following based on performance metrics.",
+        "tags": ["Trader Discovery"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "parameters": [
+          { "name": "q", "in": "query", "description": "Username/profile search query.", "schema": { "type": "string" } },
           {
-            "ApiKeyAuth": []
-          }
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sort results by metric.",
+            "schema": { "type": "string", "enum": ["profit", "volume", "followers", "copyability", "roi"], "default": "profit" }
+          },
+          { "name": "minVolume", "in": "query", "description": "Minimum total trading volume (USDC).", "schema": { "type": "number" } },
+          { "name": "minRoi", "in": "query", "description": "Minimum ROI (e.g. `0.1` = 10%).", "schema": { "type": "number" } },
+          { "name": "minWinRate", "in": "query", "description": "Minimum win rate (0–1).", "schema": { "type": "number", "minimum": 0, "maximum": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 } }
         ],
+        "responses": {
+          "200": {
+            "description": "Matching traders.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "traders": { "type": "array", "items": { "$ref": "#/components/schemas/DiscoveredTrader" } }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/api/v1/traders/{wallet}/performance": {
+      "get": {
+        "operationId": "getTraderPerformance",
+        "summary": "Get trader performance",
+        "description": "Returns detailed performance analytics for any trader on the platform, including P&L history, drawdown, and Sharpe ratio.",
+        "tags": ["Trader Discovery"],
+        "security": [{ "ApiKeyAuth": [] }],
         "parameters": [
           {
             "name": "wallet",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "description": "Trader's Ethereum wallet address.",
+            "schema": { "type": "string", "example": "0xAbCd1234..." }
           }
         ],
         "responses": {
           "200": {
-            "description": "Copy trading resumed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TraderDetail"
-                }
-              }
-            }
+            "description": "Trader performance analytics.",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TraderPerformance" } } }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          }
+          "400": { "description": "Invalid wallet address format.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
         }
       }
     },
@@ -1338,61 +931,15 @@
       "get": {
         "operationId": "listOrders",
         "summary": "List orders",
-        "description": "Returns a paginated list of orders placed by your copy-trading bot. Filter by status to focus on pending or failed orders.",
-        "tags": [
-          "Orders"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
+        "description": "Returns a paginated list of orders placed by your copy-trading bot.",
+        "tags": ["Orders"],
+        "security": [{ "ApiKeyAuth": [] }],
         "parameters": [
-          {
-            "name": "status",
-            "in": "query",
-            "description": "Filter orders by status.",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "filled",
-                "pending",
-                "cancelled",
-                "failed"
-              ]
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 50
-            }
-          },
-          {
-            "name": "cursor",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "since",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "until",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            }
-          }
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["filled", "pending", "cancelled", "failed"] } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 } },
+          { "name": "cursor", "in": "query", "schema": { "type": "string" } },
+          { "name": "since", "in": "query", "schema": { "type": "integer" } },
+          { "name": "until", "in": "query", "schema": { "type": "integer" } }
         ],
         "responses": {
           "200": {
@@ -1401,34 +948,16 @@
               "application/json": {
                 "schema": {
                   "allOf": [
-                    {
-                      "$ref": "#/components/schemas/PaginatedResponse"
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "page": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/Order"
-                          }
-                        }
-                      }
-                    }
+                    { "$ref": "#/components/schemas/PaginatedResponse" },
+                    { "type": "object", "properties": { "page": { "type": "array", "items": { "$ref": "#/components/schemas/Order" } } } }
                   ]
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          }
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
         }
       }
     },
@@ -1436,50 +965,63 @@
       "get": {
         "operationId": "getOrder",
         "summary": "Get order by ID",
-        "description": "Returns a single order by its Convex document ID.",
-        "tags": [
-          "Orders"
+        "description": "Returns a single order by its document ID.",
+        "tags": ["Orders"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "example": "k17xyz789" } }
         ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
+        "responses": {
+          "200": { "description": "Order details.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
+        }
+      }
+    },
+    "/api/v1/markets/price": {
+      "get": {
+        "operationId": "getMarketPrice",
+        "summary": "Get market price",
+        "description": "Fetch the current or historical price for a Polymarket token.",
+        "tags": ["Markets"],
+        "security": [{ "ApiKeyAuth": [] }],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
+            "name": "tokenId",
+            "in": "query",
             "required": true,
-            "description": "Convex document ID of the order.",
-            "schema": {
-              "type": "string",
-              "example": "k17xyz789"
-            }
+            "description": "Numeric Polymarket token ID.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "atTime",
+            "in": "query",
+            "description": "ISO 8601 timestamp or Unix seconds for historical price. Omit for current price.",
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
           "200": {
-            "description": "Order details.",
+            "description": "Token price data.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Order"
+                  "type": "object",
+                  "properties": {
+                    "tokenId": { "type": "string" },
+                    "price": { "type": "number", "description": "Price (0–1).", "example": 0.62 },
+                    "timestamp": { "type": "integer", "description": "Unix ms of the price." }
+                  }
                 }
               }
             }
           },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          }
+          "400": { "description": "Missing or invalid tokenId.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
         }
       }
     },
@@ -1488,58 +1030,15 @@
         "operationId": "getAccount",
         "summary": "Get account info",
         "description": "Returns information about the authenticated user's Carbon Copy account.",
-        "tags": [
-          "Account"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
+        "tags": ["Account"],
+        "security": [{ "ApiKeyAuth": [] }],
         "responses": {
-          "200": {
-            "description": "Account information.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Account"
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          }
+          "200": { "description": "Account information.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Account" } } } },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "429": { "$ref": "#/components/responses/RateLimited" }
         }
       }
     }
-  },
-  "tags": [
-    {
-      "name": "Health",
-      "description": "Service health and status."
-    },
-    {
-      "name": "Portfolio",
-      "description": "View your copy-trading portfolio, P&L, and trade history."
-    },
-    {
-      "name": "Traders",
-      "description": "Follow, configure, and manage the traders you copy."
-    },
-    {
-      "name": "Orders",
-      "description": "Inspect orders placed by your copy-trading bot."
-    },
-    {
-      "name": "Account",
-      "description": "Your Carbon Copy account information."
-    }
-  ]
+  }
 }
