@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "palm",
+  "theme": "aspen",
   "name": "Carbon Copy API",
   "description": "Programmatic access to Polymarket copy-trading. Manage portfolios, follow traders, and track orders via REST API.",
   "colors": {
