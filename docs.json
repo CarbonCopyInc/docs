@@ -40,9 +40,11 @@
     "tabs": [
       {
         "tab": "Guides",
+        "icon": "book-open",
         "groups": [
           {
             "group": "Getting Started",
+            "icon": "play",
             "pages": [
               "index",
               "quickstart",
@@ -51,6 +53,7 @@
           },
           {
             "group": "Reference",
+            "icon": "book",
             "pages": [
               "rate-limits",
               "errors",
@@ -59,6 +62,7 @@
           },
           {
             "group": "Integrations",
+            "icon": "plug",
             "pages": [
               "mcp-server"
             ]
@@ -67,6 +71,7 @@
       },
       {
         "tab": "API Reference",
+        "icon": "square-terminal",
         "groups": [
           {
             "group": "Overview",
