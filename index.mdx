@@ -1,61 +1,16 @@
 ---
 title: "Carbon Copy API"
-description: "Programmatic access to Polymarket copy-trading. Follow top traders, automate positions, and monitor your portfolio — all via REST."
+sidebarTitle: "Introduction"
+description: "Programmatic access to Polymarket copy-trading. Follow top traders, automate positions, and monitor your portfolio."
 ---
 
-## What is Carbon Copy?
-
-Carbon Copy is a copy-trading platform built on top of [Polymarket](https://polymarket.com) — the world's largest prediction market exchange. The Carbon Copy API gives you direct, programmatic control over everything you can do on the platform:
-
-- **Follow traders** — choose which wallets to mirror and how aggressively
-- **Manage positions** — view your open copy trades and P&L in real time
-- **Audit orders** — inspect every order your bot has placed
-- **Automate strategy** — pause, resume, and tune copy settings without touching the UI
-
----
-
-## Key concepts
+Carbon Copy is a copy-trading platform built on [Polymarket](https://polymarket.com). The API gives you direct control over your portfolio — follow traders, manage positions, and audit every order your bot places.
 
 <CardGroup cols={2}>
-  <Card title="Copy trading" icon="copy">
-    When a followed trader places a bet on Polymarket, Carbon Copy automatically replicates it in your account at a configurable percentage and max size.
+  <Card title="REST API" icon="code" href="/quickstart">
+    Get your API key and make your first call in under 5 minutes. Full endpoint reference included.
   </Card>
-  <Card title="Scoped API keys" icon="key">
-    Every API key carries a set of scopes (`portfolio:read`, `traders:write`, etc.). Issue narrow keys for your bots and never over-privilege them.
-  </Card>
-  <Card title="Cursor pagination" icon="arrow-right">
-    All list endpoints use opaque cursor-based pagination — no page numbers, no offset drift. Stable even if new records arrive mid-iteration.
-  </Card>
-  <Card title="Rate limits" icon="gauge-high">
-    Read endpoints allow 60 req/min with a +10 burst. Write endpoints allow 20 req/min. All limits are per API key.
-  </Card>
-</CardGroup>
-
----
-
-## Base URL
-
-```
-https://carboncopy.inc
-```
-
-All endpoints are prefixed with `/api/v1`.
-
----
-
-## Quick navigation
-
-<CardGroup cols={2}>
-  <Card title="Quickstart" icon="rocket" href="/quickstart">
-    Make your first API call in under 5 minutes.
-  </Card>
-  <Card title="Authentication" icon="shield-halved" href="/authentication">
-    Understand API keys, scopes, and Privy JWTs.
-  </Card>
-  <Card title="API Reference" icon="code" href="/api-reference/introduction">
-    Interactive explorer for all endpoints.
-  </Card>
-  <Card title="Rate limits" icon="clock" href="/rate-limits">
-    Limits, headers, and how to handle 429s.
+  <Card title="MCP Server" icon="robot" href="/mcp-server">
+    Use Carbon Copy from AI agents like Claude, Cursor, or any MCP-compatible client. One-line install.
   </Card>
 </CardGroup>

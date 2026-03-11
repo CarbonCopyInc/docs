@@ -1,8 +1,8 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "aspen",
-  "name": "Carbon Copy API",
-  "description": "Programmatic access to Polymarket copy-trading. Manage portfolios, follow traders, and track orders via REST API.",
+  "name": "Carbon Copy",
+  "description": "Programmatic access to Polymarket copy-trading. Manage portfolios, follow traders, and track orders via REST API or MCP.",
   "colors": {
     "primary": "#285e9f",
     "light": "#4075aa",
@@ -15,7 +15,6 @@
     "href": "https://carboncopy.inc"
   },
   "fonts": {
-    "family": "Geist",
     "heading": {
       "family": "Playfair Display",
       "weight": 800
@@ -47,23 +46,44 @@
           {
             "group": "Getting Started",
             "pages": [
-              "index",
-              "quickstart",
-              "authentication"
+              {
+                "page": "index",
+                "icon": "house"
+              },
+              {
+                "page": "quickstart",
+                "icon": "rocket"
+              },
+              {
+                "page": "authentication",
+                "icon": "shield-halved"
+              }
             ]
           },
           {
             "group": "Reference",
             "pages": [
-              "rate-limits",
-              "errors",
-              "pagination"
+              {
+                "page": "rate-limits",
+                "icon": "gauge-high"
+              },
+              {
+                "page": "errors",
+                "icon": "triangle-exclamation"
+              },
+              {
+                "page": "pagination",
+                "icon": "arrow-right"
+              }
             ]
           },
           {
             "group": "Integrations",
             "pages": [
-              "mcp-server"
+              {
+                "page": "mcp-server",
+                "icon": "robot"
+              }
             ]
           }
         ]
