@@ -12,7 +12,7 @@
   "logo": {
     "light": "/logo/light.png",
     "dark": "/logo/dark.png",
-    "href": "https://carboncopy.inc"
+    "href": "https://www.carboncopy.inc"
   },
   "fonts": {
     "family": "Geist",
@@ -97,7 +97,7 @@
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://carboncopy.inc"
+      "href": "https://www.carboncopy.inc/portfolio"
     }
   },
   "footer": {
