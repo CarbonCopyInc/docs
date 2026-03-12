@@ -5,13 +5,15 @@ description: "Carboncopy uses cursor-based pagination for all list endpoints. No
 
 ## Overview
 
-List endpoints return results in pages. Each response includes:
+List endpoints return results wrapped in a standard `data` / `meta` envelope. Each paginated response includes:
 
 | Field | Type | Description |
 |---|---|---|
-| `page` | `array` | The records for this page |
-| `continueCursor` | `string \| null` | Pass this as `cursor` in the next request. `null` when there are no more pages. |
-| `isDone` | `boolean` | `true` when this is the last page |
+| `data.items` | `array` | The records for this page |
+| `data.nextCursor` | `string \| null` | Pass this as `cursor` in the next request. `null` when there are no more pages. |
+| `data.hasMore` | `boolean` | `true` when more pages exist beyond this one |
+| `meta.requestId` | `string` | Unique request identifier for debugging |
+| `meta.timestamp` | `integer` | Server timestamp (Unix ms) |
 
 ---
 
@@ -19,7 +21,7 @@ List endpoints return results in pages. Each response includes:
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `limit` | `integer` | `50` | Records per page (1–100) |
+| `limit` | `integer` | `50` | Records per page (1–200) |
 | `cursor` | `string` | — | Cursor from previous response |
 | `since` | `integer` | — | Unix timestamp (ms) — include records at or after this time |
 | `until` | `integer` | — | Unix timestamp (ms) — include records before this time |
@@ -37,13 +39,19 @@ curl "https://carboncopy.inc/api/v1/portfolio/history?limit=50" \
 
 ```json
 {
-  "page": [ ... ],
-  "continueCursor": "eyJpZCI6Imsx...",
-  "isDone": false
+  "data": {
+    "items": [ ... ],
+    "nextCursor": "eyJpZCI6Imsx...",
+    "hasMore": true
+  },
+  "meta": {
+    "requestId": "cf7301af-0c1e-4354-85a8-9153db69ae6d",
+    "timestamp": 1741600000000
+  }
 }
 ```
 
-**Next page** — pass `continueCursor` as `cursor`:
+**Next page** — pass `nextCursor` as `cursor`:
 
 ```bash
 curl "https://carboncopy.inc/api/v1/portfolio/history?limit=50&cursor=eyJpZCI6Imsx..." \
@@ -52,13 +60,19 @@ curl "https://carboncopy.inc/api/v1/portfolio/history?limit=50&cursor=eyJpZCI6Im
 
 ```json
 {
-  "page": [ ... ],
-  "continueCursor": null,
-  "isDone": true
+  "data": {
+    "items": [ ... ],
+    "nextCursor": null,
+    "hasMore": false
+  },
+  "meta": {
+    "requestId": "a1b2c3d4-5678-90ab-cdef-1234567890ab",
+    "timestamp": 1741600030000
+  }
 }
 ```
 
-When `isDone` is `true` (or `continueCursor` is `null`), you've consumed all pages.
+When `hasMore` is `false` (or `nextCursor` is `null`), you've consumed all pages.
 
 ---
 
@@ -75,20 +89,20 @@ def fetch_all(endpoint, api_key, **params):
     results = []
 
     while True:
-        query = {**params, "limit": 100}
+        query = {**params, "limit": 200}
         if cursor:
             query["cursor"] = cursor
 
         response = requests.get(endpoint, headers=headers, params=query)
         response.raise_for_status()
-        data = response.json()
+        body = response.json()
 
-        results.extend(data["page"])
+        results.extend(body["data"]["items"])
 
-        if data["isDone"] or not data.get("continueCursor"):
+        if not body["data"].get("hasMore") or not body["data"].get("nextCursor"):
             break
 
-        cursor = data["continueCursor"]
+        cursor = body["data"]["nextCursor"]
 
     return results
 
@@ -105,9 +119,15 @@ print(f"Fetched {len(trades)} trades")
 
 ```typescript
 interface PaginatedResponse<T> {
-  page: T[];
-  continueCursor: string | null;
-  isDone: boolean;
+  data: {
+    items: T[];
+    nextCursor: string | null;
+    hasMore: boolean;
+  };
+  meta: {
+    requestId: string;
+    timestamp: number;
+  };
 }
 
 async function fetchAll<T>(
@@ -120,7 +140,7 @@ async function fetchAll<T>(
 
   do {
     const url = new URL(endpoint);
-    url.searchParams.set("limit", "100");
+    url.searchParams.set("limit", "200");
     for (const [k, v] of Object.entries(params)) {
       url.searchParams.set(k, String(v));
     }
@@ -132,9 +152,9 @@ async function fetchAll<T>(
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-    const data: PaginatedResponse<T> = await res.json();
-    results.push(...data.page);
-    cursor = data.continueCursor;
+    const body: PaginatedResponse<T> = await res.json();
+    results.push(...body.data.items);
+    cursor = body.data.nextCursor;
   } while (cursor !== null);
 
   return results;
@@ -164,7 +184,7 @@ curl "https://carboncopy.inc/api/v1/portfolio/history?since=${SEVEN_DAYS_AGO}&li
 ```
 
 <Tip>
-  For production polling, store the `continueCursor` from your last run and resume from there rather than re-fetching everything.
+  For production polling, store the `nextCursor` from your last run and resume from there rather than re-fetching everything.
 </Tip>
 
 ---
