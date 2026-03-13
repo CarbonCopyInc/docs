@@ -410,7 +410,7 @@
             ],
             "example": "cryptowhale"
           },
-          "realizedPnl": {
+          "realisedPnl": {
             "type": "number",
             "description": "Total realised P&L from trades copied from this trader.",
             "example": 24.10
@@ -439,7 +439,7 @@
             "description": "Human-readable market title.",
             "example": "Will Trump win the 2024 election?"
           },
-          "realizedPnl": {
+          "realisedPnl": {
             "type": "number",
             "description": "Total realised P&L from trades in this market.",
             "example": -5.20
@@ -1128,7 +1128,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Paginated open positions.",
+            "description": "Paginated positions.",
             "content": {
               "application/json": {
                 "schema": {
