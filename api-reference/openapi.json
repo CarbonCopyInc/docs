@@ -27,11 +27,16 @@
     "schemas": {
       "Error": {
         "type": "object",
-        "required": ["error"],
+        "required": [
+          "error"
+        ],
         "properties": {
           "error": {
             "type": "object",
-            "required": ["code", "message"],
+            "required": [
+              "code",
+              "message"
+            ],
             "properties": {
               "code": {
                 "type": "string",
@@ -57,18 +62,27 @@
       },
       "PaginatedResponse": {
         "type": "object",
-        "required": ["data", "meta"],
+        "required": [
+          "data",
+          "meta"
+        ],
         "properties": {
           "data": {
             "type": "object",
-            "required": ["items", "hasMore"],
+            "required": [
+              "items",
+              "hasMore"
+            ],
             "properties": {
               "items": {
                 "type": "array",
                 "items": {}
               },
               "nextCursor": {
-                "type": ["string", "null"],
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "description": "Pass this value as `cursor` in your next request to fetch the following page. `null` when no more pages exist."
               },
               "hasMore": {
@@ -129,11 +143,15 @@
       },
       "HealthResponse": {
         "type": "object",
-        "required": ["status"],
+        "required": [
+          "status"
+        ],
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["ok"],
+            "enum": [
+              "ok"
+            ],
             "example": "ok"
           },
           "version": {
@@ -194,12 +212,21 @@
             "type": "integer",
             "description": "Number of currently open copy-trade positions.",
             "example": 12
+          },
+          "realisedPnl": {
+            "type": "number",
+            "description": "All-time realised profit/loss from closed positions in USDC.",
+            "example": 34.10
           }
         }
       },
       "TraderSummary": {
         "type": "object",
-        "required": ["walletAddress", "copyTradingEnabled", "copyPercentage"],
+        "required": [
+          "walletAddress",
+          "copyTradingEnabled",
+          "copyPercentage"
+        ],
         "properties": {
           "walletAddress": {
             "type": "string",
@@ -207,7 +234,10 @@
             "example": "0xAbCd1234..."
           },
           "username": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Trader's display name.",
             "example": "sharptrader"
           },
@@ -223,7 +253,10 @@
             "example": 25
           },
           "maxCopyAmount": {
-            "type": ["number", "null"],
+            "type": [
+              "number",
+              "null"
+            ],
             "description": "Maximum USDC to deploy per copied trade. `null` means no cap.",
             "example": 500
           },
@@ -241,7 +274,9 @@
       },
       "TraderDetail": {
         "allOf": [
-          { "$ref": "#/components/schemas/TraderSummary" },
+          {
+            "$ref": "#/components/schemas/TraderSummary"
+          },
           {
             "type": "object",
             "properties": {
@@ -257,7 +292,9 @@
               "recentTrades": {
                 "type": "array",
                 "description": "The 10 most recent trades by this trader.",
-                "items": { "$ref": "#/components/schemas/CopyTrade" }
+                "items": {
+                  "$ref": "#/components/schemas/CopyTrade"
+                }
               }
             }
           }
@@ -271,7 +308,10 @@
             "example": "0xAbCd1234..."
           },
           "username": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "example": "sharptrader"
           },
           "totalProfit": {
@@ -304,11 +344,29 @@
       "TraderPerformance": {
         "type": "object",
         "properties": {
-          "walletAddress": { "type": "string", "example": "0xAbCd1234..." },
-          "username": { "type": ["string", "null"], "example": "sharptrader" },
-          "totalProfit": { "type": "number", "example": 4200.0 },
-          "totalVolume": { "type": "number", "example": 32000.0 },
-          "roi": { "type": "number", "example": 0.131 },
+          "walletAddress": {
+            "type": "string",
+            "example": "0xAbCd1234..."
+          },
+          "username": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "sharptrader"
+          },
+          "totalProfit": {
+            "type": "number",
+            "example": 4200.0
+          },
+          "totalVolume": {
+            "type": "number",
+            "example": 32000.0
+          },
+          "roi": {
+            "type": "number",
+            "example": 0.131
+          },
           "maxDrawdown": {
             "type": "number",
             "description": "Maximum peak-to-trough drawdown (decimal).",
@@ -325,8 +383,14 @@
             "items": {
               "type": "object",
               "properties": {
-                "date": { "type": "string", "example": "2025-01-01" },
-                "pnl": { "type": "number", "example": 120.0 }
+                "date": {
+                  "type": "string",
+                  "example": "2025-01-01"
+                },
+                "pnl": {
+                  "type": "number",
+                  "example": 120.0
+                }
               }
             }
           }
@@ -335,8 +399,17 @@
       "PnlByTraderItem": {
         "type": "object",
         "properties": {
-          "traderWallet": { "type": "string", "example": "0xAbCd1234..." },
-          "username": { "type": ["string", "null"], "example": "cryptowhale" },
+          "traderWallet": {
+            "type": "string",
+            "example": "0xAbCd1234..."
+          },
+          "username": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "cryptowhale"
+          },
           "realizedPnl": {
             "type": "number",
             "description": "Total realised P&L from trades copied from this trader.",
@@ -355,18 +428,41 @@
       },
       "CopyTrade": {
         "type": "object",
-        "required": ["id", "traderWallet", "marketId", "side", "amount", "status", "createdAt"],
+        "required": [
+          "id",
+          "traderWallet",
+          "marketId",
+          "side",
+          "amount",
+          "status",
+          "createdAt"
+        ],
         "properties": {
-          "id": { "type": "string", "example": "k17abc123def456" },
-          "traderWallet": { "type": "string", "example": "0xAbCd1234..." },
-          "marketId": { "type": "string", "example": "0x1234abcd..." },
+          "id": {
+            "type": "string",
+            "example": "k17abc123def456"
+          },
+          "traderWallet": {
+            "type": "string",
+            "example": "0xAbCd1234..."
+          },
+          "marketId": {
+            "type": "string",
+            "example": "0x1234abcd..."
+          },
           "marketQuestion": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "example": "Will BTC exceed $100k by end of 2025?"
           },
           "side": {
             "type": "string",
-            "enum": ["YES", "NO"],
+            "enum": [
+              "YES",
+              "NO"
+            ],
             "description": "Which outcome was purchased."
           },
           "amount": {
@@ -386,7 +482,14 @@
           },
           "status": {
             "type": "string",
-            "enum": ["open", "executed", "filled", "resolved_win", "resolved_loss", "cancelled"],
+            "enum": [
+              "open",
+              "executed",
+              "filled",
+              "resolved_win",
+              "resolved_loss",
+              "cancelled"
+            ],
             "description": "Current status of this copy trade."
           },
           "createdAt": {
@@ -398,33 +501,114 @@
       },
       "Order": {
         "type": "object",
-        "required": ["id", "marketId", "side", "amount", "status", "createdAt"],
+        "required": [
+          "id",
+          "marketId",
+          "side",
+          "amount",
+          "status",
+          "createdAt"
+        ],
         "properties": {
-          "id": { "type": "string", "example": "k17xyz789" },
-          "marketId": { "type": "string" },
-          "marketQuestion": { "type": ["string", "null"] },
-          "side": { "type": "string", "enum": ["YES", "NO"] },
-          "amount": { "type": "number", "example": 50.0 },
-          "filledAmount": { "type": ["number", "null"], "example": 50.0 },
-          "price": { "type": ["number", "null"], "example": 0.62 },
+          "id": {
+            "type": "string",
+            "example": "k17xyz789"
+          },
+          "marketId": {
+            "type": "string"
+          },
+          "marketQuestion": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "side": {
+            "type": "string",
+            "enum": [
+              "YES",
+              "NO"
+            ]
+          },
+          "amount": {
+            "type": "number",
+            "example": 50.0
+          },
+          "filledAmount": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "example": 50.0
+          },
+          "price": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "example": 0.62
+          },
           "status": {
             "type": "string",
-            "enum": ["filled", "pending", "cancelled", "failed"]
+            "enum": [
+              "filled",
+              "pending",
+              "cancelled",
+              "failed"
+            ]
           },
-          "createdAt": { "type": "integer", "example": 1741550000000 },
-          "filledAt": { "type": ["integer", "null"] },
-          "errorMessage": { "type": ["string", "null"] }
+          "createdAt": {
+            "type": "integer",
+            "example": 1741550000000
+          },
+          "filledAt": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "errorMessage": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       },
       "Account": {
         "type": "object",
-        "required": ["userId", "walletAddress", "createdAt"],
+        "required": [
+          "userId",
+          "walletAddress",
+          "createdAt"
+        ],
         "properties": {
-          "userId": { "type": "string", "example": "user_abc123" },
-          "walletAddress": { "type": ["string", "null"], "example": "0xDead1234..." },
-          "email": { "type": ["string", "null"], "example": "trader@example.com" },
-          "copyTradingEnabled": { "type": "boolean", "example": true },
-          "createdAt": { "type": "integer", "example": 1740000000000 }
+          "userId": {
+            "type": "string",
+            "example": "user_abc123"
+          },
+          "walletAddress": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "0xDead1234..."
+          },
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "trader@example.com"
+          },
+          "copyTradingEnabled": {
+            "type": "boolean",
+            "example": true
+          },
+          "createdAt": {
+            "type": "integer",
+            "example": 1740000000000
+          }
         }
       }
     },
@@ -433,8 +617,15 @@
         "description": "Missing or invalid authentication credentials.",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" },
-            "example": { "error": { "code": "unauthorized", "message": "Invalid or missing API key." } }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": {
+                "code": "unauthorized",
+                "message": "Invalid or missing API key."
+              }
+            }
           }
         }
       },
@@ -442,8 +633,15 @@
         "description": "Authenticated but insufficient permissions (wrong scope).",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" },
-            "example": { "error": { "code": "forbidden", "message": "This key does not have the required scope." } }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": {
+                "code": "forbidden",
+                "message": "This key does not have the required scope."
+              }
+            }
           }
         }
       },
@@ -451,8 +649,15 @@
         "description": "The requested resource does not exist.",
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" },
-            "example": { "error": { "code": "not_found", "message": "Resource not found." } }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": {
+                "code": "not_found",
+                "message": "Resource not found."
+              }
+            }
           }
         }
       },
@@ -461,26 +666,56 @@
         "headers": {
           "Retry-After": {
             "description": "Seconds to wait before retrying.",
-            "schema": { "type": "integer" }
+            "schema": {
+              "type": "integer"
+            }
           }
         },
         "content": {
           "application/json": {
-            "schema": { "$ref": "#/components/schemas/Error" },
-            "example": { "error": { "code": "rate_limited", "message": "Rate limit exceeded. Retry after 30 seconds." } }
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": {
+                "code": "rate_limited",
+                "message": "Rate limit exceeded. Retry after 30 seconds."
+              }
+            }
           }
         }
       }
     }
   },
   "tags": [
-    { "name": "Health", "description": "Service health and status." },
-    { "name": "Portfolio", "description": "Portfolio summary, positions, trade history, and P&L." },
-    { "name": "Follow Management", "description": "Follow, configure, and manage the traders you copy. All routes live under `/portfolio/traders`." },
-    { "name": "Trader Discovery", "description": "Search and filter traders on the platform. Routes under `/traders`." },
-    { "name": "Orders", "description": "Inspect orders placed by your copy-trading bot." },
-    { "name": "Markets", "description": "Market data — prices and token info." },
-    { "name": "Account", "description": "Your Carbon Copy account information." }
+    {
+      "name": "Health",
+      "description": "Service health and status."
+    },
+    {
+      "name": "Portfolio",
+      "description": "Portfolio summary, positions, trade history, and P&L."
+    },
+    {
+      "name": "Follow Management",
+      "description": "Follow, configure, and manage the traders you copy. All routes live under `/portfolio/traders`."
+    },
+    {
+      "name": "Trader Discovery",
+      "description": "Search and filter traders on the platform. Routes under `/traders`."
+    },
+    {
+      "name": "Orders",
+      "description": "Inspect orders placed by your copy-trading bot."
+    },
+    {
+      "name": "Markets",
+      "description": "Market data — prices and token info."
+    },
+    {
+      "name": "Account",
+      "description": "Your Carbon Copy account information."
+    }
   ],
   "paths": {
     "/api/v1/health": {
@@ -488,14 +723,22 @@
         "operationId": "getHealth",
         "summary": "Health check",
         "description": "Returns API health status. No authentication required.",
-        "tags": ["Health"],
+        "tags": [
+          "Health"
+        ],
         "responses": {
           "200": {
             "description": "API is healthy.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HealthResponse" },
-                "example": { "status": "ok", "version": "2.0.0", "timestamp": 1741600000000 }
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                },
+                "example": {
+                  "status": "ok",
+                  "version": "2.0.0",
+                  "timestamp": 1741600000000
+                }
               }
             }
           }
@@ -507,20 +750,34 @@
         "operationId": "getPortfolio",
         "summary": "Get portfolio summary",
         "description": "Returns an aggregated summary of your copy-trading portfolio including live wallet balance, open positions value, unrealised P&L, and lifetime stats.",
-        "tags": ["Portfolio"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Portfolio"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Portfolio summary.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/PortfolioSummary" }
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioSummary"
+                }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     },
@@ -529,13 +786,48 @@
         "operationId": "getPortfolioHistory",
         "summary": "List copy trade history",
         "description": "Returns a paginated list of all copy trades. Every item includes a `pnl` field (`0` when not yet realized). Also available at `/api/v1/portfolio/trades`.",
-        "tags": ["Portfolio"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Portfolio"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "parameters": [
-          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 } },
-          { "name": "cursor", "in": "query", "schema": { "type": "string" } },
-          { "name": "since", "in": "query", "description": "Unix ms — filter trades on or after this time.", "schema": { "type": "integer" } },
-          { "name": "until", "in": "query", "description": "Unix ms — filter trades before this time.", "schema": { "type": "integer" } }
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "description": "Unix ms — filter trades on or after this time.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "description": "Unix ms — filter trades before this time.",
+            "schema": {
+              "type": "integer"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -548,20 +840,40 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "items": { "type": "array", "items": { "$ref": "#/components/schemas/CopyTrade" } },
-                        "nextCursor": { "type": ["string", "null"] },
-                        "hasMore": { "type": "boolean" }
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/CopyTrade"
+                          }
+                        },
+                        "nextCursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "hasMore": {
+                          "type": "boolean"
+                        }
                       }
                     },
-                    "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+                    "meta": {
+                      "$ref": "#/components/schemas/ResponseMeta"
+                    }
                   }
                 }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     },
@@ -570,13 +882,48 @@
         "operationId": "getPortfolioTrades",
         "summary": "List copy trade history (alias)",
         "description": "Alias for `/api/v1/portfolio/history`. Returns identical data.",
-        "tags": ["Portfolio"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Portfolio"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "parameters": [
-          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 } },
-          { "name": "cursor", "in": "query", "schema": { "type": "string" } },
-          { "name": "since", "in": "query", "description": "Unix ms — filter trades on or after this time.", "schema": { "type": "integer" } },
-          { "name": "until", "in": "query", "description": "Unix ms — filter trades before this time.", "schema": { "type": "integer" } }
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "description": "Unix ms — filter trades on or after this time.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "description": "Unix ms — filter trades before this time.",
+            "schema": {
+              "type": "integer"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -589,20 +936,40 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "items": { "type": "array", "items": { "$ref": "#/components/schemas/CopyTrade" } },
-                        "nextCursor": { "type": ["string", "null"] },
-                        "hasMore": { "type": "boolean" }
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/CopyTrade"
+                          }
+                        },
+                        "nextCursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "hasMore": {
+                          "type": "boolean"
+                        }
                       }
                     },
-                    "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+                    "meta": {
+                      "$ref": "#/components/schemas/ResponseMeta"
+                    }
                   }
                 }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     },
@@ -611,14 +978,38 @@
         "operationId": "getPnlHistory",
         "summary": "Get P&L time series",
         "description": "Returns time-series portfolio P&L snapshots (captured every 15 minutes) for charting performance over time. Includes realised and unrealised P&L breakdown.",
-        "tags": ["Portfolio"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Portfolio"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "days",
             "in": "query",
             "description": "Number of days of history to return.",
-            "schema": { "type": "integer", "minimum": 1, "maximum": 90, "default": 30 }
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 90,
+              "default": 30
+            }
+          },
+          {
+            "name": "interval",
+            "in": "query",
+            "description": "Aggregation interval — returns the last snapshot per bucket. Use `1h` or `4h` for more granularity.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "1h",
+                "4h",
+                "1d"
+              ]
+            }
           }
         ],
         "responses": {
@@ -634,19 +1025,29 @@
                       "properties": {
                         "items": {
                           "type": "array",
-                          "items": { "$ref": "#/components/schemas/PnlSnapshot" }
+                          "items": {
+                            "$ref": "#/components/schemas/PnlSnapshot"
+                          }
                         }
                       }
                     },
-                    "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+                    "meta": {
+                      "$ref": "#/components/schemas/ResponseMeta"
+                    }
                   }
                 }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     },
@@ -655,11 +1056,32 @@
         "operationId": "getPortfolioPositions",
         "summary": "List open positions",
         "description": "Returns a paginated list of currently open copy-trade positions.",
-        "tags": ["Portfolio"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Portfolio"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "parameters": [
-          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 } },
-          { "name": "cursor", "in": "query", "schema": { "type": "string" } }
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -672,20 +1094,40 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "items": { "type": "array", "items": { "$ref": "#/components/schemas/CopyTrade" } },
-                        "nextCursor": { "type": ["string", "null"] },
-                        "hasMore": { "type": "boolean" }
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/CopyTrade"
+                          }
+                        },
+                        "nextCursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "hasMore": {
+                          "type": "boolean"
+                        }
                       }
                     },
-                    "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+                    "meta": {
+                      "$ref": "#/components/schemas/ResponseMeta"
+                    }
                   }
                 }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     },
@@ -694,21 +1136,49 @@
         "operationId": "closePosition",
         "summary": "Close a position",
         "description": "Sell all shares in an open position at the current market price.",
-        "tags": ["Portfolio"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Portfolio"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["positionId", "marketSlug", "direction", "shares"],
+                "required": [
+                  "positionId",
+                  "marketSlug",
+                  "direction",
+                  "shares"
+                ],
                 "properties": {
-                  "positionId": { "type": "string", "description": "Convex document ID of the position." },
-                  "marketSlug": { "type": "string", "example": "will-x-happen" },
-                  "direction": { "type": "string", "example": "YES" },
-                  "shares": { "type": "number", "description": "Number of shares to sell.", "example": 15.5 },
-                  "outcome": { "type": "string", "description": "Optional outcome override.", "example": "YES" }
+                  "positionId": {
+                    "type": "string",
+                    "description": "Convex document ID of the position."
+                  },
+                  "marketSlug": {
+                    "type": "string",
+                    "example": "will-x-happen"
+                  },
+                  "direction": {
+                    "type": "string",
+                    "example": "YES"
+                  },
+                  "shares": {
+                    "type": "number",
+                    "description": "Number of shares to sell.",
+                    "example": 15.5
+                  },
+                  "outcome": {
+                    "type": "string",
+                    "description": "Optional outcome override.",
+                    "example": "YES"
+                  }
                 }
               }
             }
@@ -722,16 +1192,34 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "example": true }
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
                   }
                 }
               }
             }
           },
-          "400": { "description": "Missing or invalid fields.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "400": {
+            "description": "Missing or invalid fields.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     },
@@ -740,8 +1228,14 @@
         "operationId": "getPnlByTrader",
         "summary": "P&L breakdown by trader",
         "description": "Returns realised P&L and volume grouped by each copied trader.",
-        "tags": ["Portfolio"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Portfolio"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "P&L breakdown.",
@@ -752,16 +1246,24 @@
                   "properties": {
                     "breakdown": {
                       "type": "array",
-                      "items": { "$ref": "#/components/schemas/PnlByTraderItem" }
+                      "items": {
+                        "$ref": "#/components/schemas/PnlByTraderItem"
+                      }
                     }
                   }
                 }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     },
@@ -770,8 +1272,14 @@
         "operationId": "listFollowedTraders",
         "summary": "List followed traders",
         "description": "Returns all traders you currently follow, including copy settings and performance stats.",
-        "tags": ["Follow Management"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Follow Management"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Followed traders.",
@@ -780,35 +1288,70 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "traders": { "type": "array", "items": { "$ref": "#/components/schemas/TraderSummary" } }
+                    "traders": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TraderSummary"
+                      }
+                    }
                   }
                 }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       },
       "post": {
         "operationId": "followTrader",
         "summary": "Follow a trader",
         "description": "Start copy-trading a new wallet. Returns `409 Conflict` if already following.",
-        "tags": ["Follow Management"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Follow Management"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["walletAddress", "copyPercentage"],
+                "required": [
+                  "walletAddress",
+                  "copyPercentage"
+                ],
                 "properties": {
-                  "walletAddress": { "type": "string", "example": "0xAbCd1234..." },
-                  "copyPercentage": { "type": "number", "minimum": 0, "maximum": 100, "example": 25 },
-                  "maxCopyAmount": { "type": "number", "description": "Max USDC per trade. Omit for no cap.", "example": 500 },
-                  "notificationsEnabled": { "type": "boolean", "default": true }
+                  "walletAddress": {
+                    "type": "string",
+                    "example": "0xAbCd1234..."
+                  },
+                  "copyPercentage": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100,
+                    "example": 25
+                  },
+                  "maxCopyAmount": {
+                    "type": "number",
+                    "description": "Max USDC per trade. Omit for no cap.",
+                    "example": 500
+                  },
+                  "notificationsEnabled": {
+                    "type": "boolean",
+                    "default": true
+                  }
                 }
               }
             }
@@ -817,21 +1360,49 @@
         "responses": {
           "201": {
             "description": "Trader followed.",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TraderDetail" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TraderDetail"
+                }
+              }
+            }
           },
-          "400": { "description": "Invalid request.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
           "409": {
             "description": "Already following this trader.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" },
-                "example": { "error": { "code": "conflict", "message": "You are already following this trader." } }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "conflict",
+                    "message": "You are already following this trader."
+                  }
+                }
               }
             }
           },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     },
@@ -840,15 +1411,23 @@
         "operationId": "batchUpdateTraders",
         "summary": "Batch update followed traders",
         "description": "Update copy settings for up to 100 followed traders in a single request.",
-        "tags": ["Follow Management"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Follow Management"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["updates"],
+                "required": [
+                  "updates"
+                ],
                 "properties": {
                   "updates": {
                     "type": "array",
@@ -856,13 +1435,31 @@
                     "maxItems": 100,
                     "items": {
                       "type": "object",
-                      "required": ["walletAddress"],
+                      "required": [
+                        "walletAddress"
+                      ],
                       "properties": {
-                        "walletAddress": { "type": "string", "example": "0xAbCd1234..." },
-                        "copyPercentage": { "type": "number", "minimum": 0, "maximum": 100 },
-                        "maxCopyAmount": { "type": ["number", "null"] },
-                        "notificationsEnabled": { "type": "boolean" },
-                        "copyTradingEnabled": { "type": "boolean" }
+                        "walletAddress": {
+                          "type": "string",
+                          "example": "0xAbCd1234..."
+                        },
+                        "copyPercentage": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 100
+                        },
+                        "maxCopyAmount": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "notificationsEnabled": {
+                          "type": "boolean"
+                        },
+                        "copyTradingEnabled": {
+                          "type": "boolean"
+                        }
                       }
                     }
                   }
@@ -884,9 +1481,15 @@
                       "items": {
                         "type": "object",
                         "properties": {
-                          "walletAddress": { "type": "string" },
-                          "success": { "type": "boolean" },
-                          "error": { "type": "string" }
+                          "walletAddress": {
+                            "type": "string"
+                          },
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
                         }
                       }
                     }
@@ -895,10 +1498,25 @@
               }
             }
           },
-          "400": { "description": "Invalid request.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     },
@@ -909,29 +1527,61 @@
           "in": "path",
           "required": true,
           "description": "Trader's Ethereum wallet address.",
-          "schema": { "type": "string", "example": "0xAbCd1234..." }
+          "schema": {
+            "type": "string",
+            "example": "0xAbCd1234..."
+          }
         }
       ],
       "get": {
         "operationId": "getFollowedTrader",
         "summary": "Get followed trader",
         "description": "Returns detailed info for a single followed trader including recent trades.",
-        "tags": ["Follow Management"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Follow Management"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "responses": {
-          "200": { "description": "Trader details.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TraderDetail" } } } },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "200": {
+            "description": "Trader details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TraderDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       },
       "patch": {
         "operationId": "updateFollowedTrader",
         "summary": "Update follow settings",
         "description": "Update copy-trading settings. All fields are optional — only provided fields are changed.",
-        "tags": ["Follow Management"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Follow Management"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -939,39 +1589,105 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "copyPercentage": { "type": "number", "minimum": 0, "maximum": 100 },
-                  "maxCopyAmount": { "type": ["number", "null"], "description": "Set to `null` to remove the cap." },
-                  "notificationsEnabled": { "type": "boolean" },
-                  "copyTradingEnabled": { "type": "boolean" }
+                  "copyPercentage": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  "maxCopyAmount": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Set to `null` to remove the cap."
+                  },
+                  "notificationsEnabled": {
+                    "type": "boolean"
+                  },
+                  "copyTradingEnabled": {
+                    "type": "boolean"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": { "description": "Updated trader.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TraderDetail" } } } },
-          "400": { "description": "Invalid request.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "200": {
+            "description": "Updated trader.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TraderDetail"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       },
       "delete": {
         "operationId": "unfollowTrader",
         "summary": "Unfollow a trader",
         "description": "Stop copy-trading this wallet. Existing open positions are **not** automatically closed.",
-        "tags": ["Follow Management"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Follow Management"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Trader unfollowed.",
-            "content": { "application/json": { "schema": { "type": "object", "properties": { "success": { "type": "boolean", "example": true } } } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
           },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     },
@@ -980,17 +1696,47 @@
         "operationId": "pauseTrader",
         "summary": "Pause copy trading",
         "description": "Temporarily pause copy trading for a specific trader without unfollowing.",
-        "tags": ["Follow Management"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Follow Management"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "parameters": [
-          { "name": "wallet", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "wallet",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "Copy trading paused.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TraderDetail" } } } },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "200": {
+            "description": "Copy trading paused.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TraderDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     },
@@ -999,17 +1745,47 @@
         "operationId": "resumeTrader",
         "summary": "Resume copy trading",
         "description": "Resume copy trading for a previously paused trader.",
-        "tags": ["Follow Management"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Follow Management"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "parameters": [
-          { "name": "wallet", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "wallet",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "Copy trading resumed.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TraderDetail" } } } },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "200": {
+            "description": "Copy trading resumed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TraderDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     },
@@ -1018,20 +1794,75 @@
         "operationId": "discoverTraders",
         "summary": "Discover traders",
         "description": "Search and filter traders on the platform. Use this to find traders worth following based on performance metrics.",
-        "tags": ["Trader Discovery"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Trader Discovery"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "parameters": [
-          { "name": "q", "in": "query", "description": "Username/profile search query.", "schema": { "type": "string" } },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Username/profile search query.",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "sortBy",
             "in": "query",
             "description": "Sort results by metric.",
-            "schema": { "type": "string", "enum": ["profit", "volume", "followers", "copyability", "roi"], "default": "profit" }
+            "schema": {
+              "type": "string",
+              "enum": [
+                "profit",
+                "volume",
+                "followers",
+                "copyability",
+                "roi"
+              ],
+              "default": "profit"
+            }
           },
-          { "name": "minVolume", "in": "query", "description": "Minimum total trading volume (USDC).", "schema": { "type": "number" } },
-          { "name": "minRoi", "in": "query", "description": "Minimum ROI (e.g. `0.1` = 10%).", "schema": { "type": "number" } },
-          { "name": "minWinRate", "in": "query", "description": "Minimum win rate (0–1).", "schema": { "type": "number", "minimum": 0, "maximum": 1 } },
-          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 } }
+          {
+            "name": "minVolume",
+            "in": "query",
+            "description": "Minimum total trading volume (USDC).",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "minRoi",
+            "in": "query",
+            "description": "Minimum ROI (e.g. `0.1` = 10%).",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "minWinRate",
+            "in": "query",
+            "description": "Minimum win rate (0–1).",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -1041,15 +1872,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "traders": { "type": "array", "items": { "$ref": "#/components/schemas/DiscoveredTrader" } }
+                    "traders": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DiscoveredTrader"
+                      }
+                    }
                   }
                 }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     },
@@ -1058,27 +1900,59 @@
         "operationId": "getTraderPerformance",
         "summary": "Get trader performance",
         "description": "Returns detailed performance analytics for any trader on the platform, including P&L history, drawdown, and Sharpe ratio.",
-        "tags": ["Trader Discovery"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Trader Discovery"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "wallet",
             "in": "path",
             "required": true,
             "description": "Trader's Ethereum wallet address.",
-            "schema": { "type": "string", "example": "0xAbCd1234..." }
+            "schema": {
+              "type": "string",
+              "example": "0xAbCd1234..."
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "Trader performance analytics.",
-            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/TraderPerformance" } } }
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TraderPerformance"
+                }
+              }
+            }
           },
-          "400": { "description": "Invalid wallet address format.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "400": {
+            "description": "Invalid wallet address format.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     },
@@ -1087,14 +1961,59 @@
         "operationId": "listOrders",
         "summary": "List orders",
         "description": "Returns a paginated list of orders placed by your copy-trading bot.",
-        "tags": ["Orders"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Orders"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "parameters": [
-          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["filled", "pending", "cancelled", "failed"] } },
-          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 } },
-          { "name": "cursor", "in": "query", "schema": { "type": "string" } },
-          { "name": "since", "in": "query", "schema": { "type": "integer" } },
-          { "name": "until", "in": "query", "schema": { "type": "integer" } }
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "filled",
+                "pending",
+                "cancelled",
+                "failed"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -1107,20 +2026,40 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "items": { "type": "array", "items": { "$ref": "#/components/schemas/Order" } },
-                        "nextCursor": { "type": ["string", "null"] },
-                        "hasMore": { "type": "boolean" }
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Order"
+                          }
+                        },
+                        "nextCursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "hasMore": {
+                          "type": "boolean"
+                        }
                       }
                     },
-                    "meta": { "$ref": "#/components/schemas/ResponseMeta" }
+                    "meta": {
+                      "$ref": "#/components/schemas/ResponseMeta"
+                    }
                   }
                 }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     },
@@ -1129,17 +2068,48 @@
         "operationId": "getOrder",
         "summary": "Get order by ID",
         "description": "Returns a single order by its document ID.",
-        "tags": ["Orders"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Orders"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "example": "k17xyz789" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "k17xyz789"
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "Order details.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } } },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "404": { "$ref": "#/components/responses/NotFound" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "200": {
+            "description": "Order details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     },
@@ -1148,21 +2118,31 @@
         "operationId": "getMarketPrice",
         "summary": "Get market price",
         "description": "Fetch the current or historical price for a Polymarket token.",
-        "tags": ["Markets"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Markets"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "tokenId",
             "in": "query",
             "required": true,
             "description": "Numeric Polymarket token ID.",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "atTime",
             "in": "query",
             "description": "ISO 8601 timestamp or Unix seconds for historical price. Omit for current price.",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1173,18 +2153,42 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "tokenId": { "type": "string" },
-                    "price": { "type": "number", "description": "Price (0–1).", "example": 0.62 },
-                    "timestamp": { "type": "integer", "description": "Unix ms of the price." }
+                    "tokenId": {
+                      "type": "string"
+                    },
+                    "price": {
+                      "type": "number",
+                      "description": "Price (0–1).",
+                      "example": 0.62
+                    },
+                    "timestamp": {
+                      "type": "integer",
+                      "description": "Unix ms of the price."
+                    }
                   }
                 }
               }
             }
           },
-          "400": { "description": "Missing or invalid tokenId.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "400": {
+            "description": "Missing or invalid tokenId.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     },
@@ -1193,13 +2197,34 @@
         "operationId": "getAccount",
         "summary": "Get account info",
         "description": "Returns information about the authenticated user's Carbon Copy account.",
-        "tags": ["Account"],
-        "security": [{ "ApiKeyAuth": [] }],
+        "tags": [
+          "Account"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
         "responses": {
-          "200": { "description": "Account information.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Account" } } } },
-          "401": { "$ref": "#/components/responses/Unauthorized" },
-          "403": { "$ref": "#/components/responses/Forbidden" },
-          "429": { "$ref": "#/components/responses/RateLimited" }
+          "200": {
+            "description": "Account information.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
         }
       }
     }
