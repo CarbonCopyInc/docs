@@ -129,7 +129,7 @@
             "description": "Total P&L (deposit-normalised) at this snapshot.",
             "example": 12.50
           },
-          "realisedPnl": {
+          "realizedPnl": {
             "type": "number",
             "description": "Realised P&L at this snapshot.",
             "example": 8.00
@@ -213,7 +213,7 @@
             "description": "Number of currently open copy-trade positions.",
             "example": 12
           },
-          "realisedPnl": {
+          "realizedPnl": {
             "type": "number",
             "description": "All-time realised profit/loss from closed positions in USDC.",
             "example": 34.10
@@ -423,6 +423,35 @@
           "tradeCount": {
             "type": "integer",
             "example": 12
+          }
+        }
+      },
+      "PnlByMarketItem": {
+        "type": "object",
+        "properties": {
+          "marketId": {
+            "type": "string",
+            "description": "Market slug identifier.",
+            "example": "will-trump-win-2024"
+          },
+          "title": {
+            "type": "string",
+            "description": "Human-readable market title.",
+            "example": "Will Trump win the 2024 election?"
+          },
+          "realizedPnl": {
+            "type": "number",
+            "description": "Total realised P&L from trades in this market.",
+            "example": -5.20
+          },
+          "totalVolume": {
+            "type": "number",
+            "description": "Total USDC deployed in this market.",
+            "example": 150.0
+          },
+          "tradeCount": {
+            "type": "integer",
+            "example": 4
           }
         }
       },
@@ -1054,8 +1083,8 @@
     "/api/v1/portfolio/positions": {
       "get": {
         "operationId": "getPortfolioPositions",
-        "summary": "List open positions",
-        "description": "Returns a paginated list of currently open copy-trade positions.",
+        "summary": "List positions",
+        "description": "Returns a paginated list of copy-trade positions. Use the `status` parameter to filter by open, closed, or all positions.",
         "tags": [
           "Portfolio"
         ],
@@ -1081,11 +1110,25 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter positions by status.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "open",
+                "closed",
+                "all"
+              ],
+              "default": "open"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Paginated open positions.",
+            "description": "Paginated positions.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1248,6 +1291,50 @@
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/PnlByTraderItem"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/pnl-by-market": {
+      "get": {
+        "operationId": "getPnlByMarket",
+        "summary": "P&L breakdown by market",
+        "description": "Returns realised P&L and volume grouped by each market you have traded.",
+        "tags": [
+          "Portfolio"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "P&L breakdown by market.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "breakdown": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PnlByMarketItem"
                       }
                     }
                   }
