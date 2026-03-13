@@ -129,7 +129,7 @@
             "description": "Total P&L (deposit-normalised) at this snapshot.",
             "example": 12.50
           },
-          "realisedPnl": {
+          "realizedPnl": {
             "type": "number",
             "description": "Realised P&L at this snapshot.",
             "example": 8.00
@@ -213,7 +213,7 @@
             "description": "Number of currently open copy-trade positions.",
             "example": 12
           },
-          "realisedPnl": {
+          "realizedPnl": {
             "type": "number",
             "description": "All-time realised profit/loss from closed positions in USDC.",
             "example": 34.10
@@ -410,7 +410,7 @@
             ],
             "example": "cryptowhale"
           },
-          "realisedPnl": {
+          "realizedPnl": {
             "type": "number",
             "description": "Total realised P&L from trades copied from this trader.",
             "example": 24.10
@@ -439,7 +439,7 @@
             "description": "Human-readable market title.",
             "example": "Will Trump win the 2024 election?"
           },
-          "realisedPnl": {
+          "realizedPnl": {
             "type": "number",
             "description": "Total realised P&L from trades in this market.",
             "example": -5.20
