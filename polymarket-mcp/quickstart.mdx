@@ -1,48 +1,46 @@
 ---
 title: "Polymarket MCP Quickstart"
-description: "Run polymarket-mcp locally, connect with MCP stdio, and configure runtime/auth environment variables."
+description: "Run polymarket-mcp via npm or npx, connect with MCP stdio, and configure runtime/auth environment variables."
 ---
 
 ## Overview
 
 This quickstart covers:
 
-1. installing and building `polymarket-mcp`
-2. running the MCP stdio server
-3. wiring a client connection
-4. configuring required vs optional environment variables
+1. running `polymarket-mcp` from npm
+2. wiring a stdio MCP client connection
+3. configuring required vs optional environment variables
+4. using a source checkout only when you need local development
 
-## 1) Install and build
+## 1) Run from npm
 
-Today, `polymarket-mcp` is consumed from source (not a published npm package).
+Use the published package as the default install path.
 
-```bash
-git clone https://github.com/CarbonCopyInc/polymarket-mcp.git
-cd polymarket-mcp
-npm install
-npm run build
+<CodeGroup>
+```bash One-off with npx
+npx -y polymarket-mcp
 ```
 
-The MCP entrypoint is `dist/index.js` after build.
-
-## 2) Run the server (stdio)
-
-```bash
-node dist/index.js
+```bash Global install
+npm install -g polymarket-mcp
+polymarket-mcp
 ```
+</CodeGroup>
 
-The process speaks MCP over stdio. Your MCP client launches this command and manages the connection.
+The server speaks MCP over stdio, so your MCP client launches the process and manages the connection.
 
-## 3) MCP client connection basics
+## 2) MCP client connection basics
 
-Any MCP client that supports local stdio servers can connect. Use your local clone path.
+Any MCP client that supports local stdio servers can connect.
+
+### Minimal `npx` configuration
 
 ```json
 {
   "mcpServers": {
     "polymarket": {
-      "command": "node",
-      "args": ["/absolute/path/to/polymarket-mcp/dist/index.js"],
+      "command": "npx",
+      "args": ["-y", "polymarket-mcp"],
       "env": {
         "POLYMARKET_CHAIN_ID": "137"
       }
@@ -51,25 +49,24 @@ Any MCP client that supports local stdio servers can connect. Use your local clo
 }
 ```
 
-If your client supports project-local binaries, this also works:
+### Installed binary configuration
 
 ```json
 {
   "mcpServers": {
     "polymarket": {
-      "command": "npm",
-      "args": ["run", "dev", "--silent"],
-      "cwd": "/absolute/path/to/polymarket-mcp"
+      "command": "polymarket-mcp",
+      "env": {
+        "POLYMARKET_CHAIN_ID": "137"
+      }
     }
   }
 }
 ```
 
-Use `npm run dev` only for local development. Use `node dist/index.js` in stable environments.
+## 3) Environment variables
 
-## 4) Environment variables
-
-`polymarket-mcp` can run with no secrets for public discovery tools. Add auth variables only for account/trading/user-specific features.
+`polymarket-mcp` can run with no secrets for public discovery tools. Add auth variables only for account, trading, relayer, builder-relayer, or user-specific features.
 
 ### Required for basic startup
 
@@ -101,16 +98,36 @@ Use `npm run dev` only for local development. Use `node dist/index.js` in stable
   If auth credentials are missing, public tools still work. Auth-dependent tools may return errors or structured "skipped" diagnostics depending on the flow.
 </Note>
 
-## 5) Minimal smoke check
+## 4) Minimal smoke check
 
 After connecting in your MCP client, call these in order:
 
 1. `health_check`
 2. `list_sampling_simplified_markets`
 3. `search` with `{ "q": "election", "limit": 5 }`
-4. `read_resource` for `polymarket://status` (if your client supports resource reads)
+4. `read_resource` for `polymarket://status` if your client supports resource reads
 
 This verifies stdio transport, public tool access, and runtime status visibility.
+
+## 5) Alternative: run from source
+
+Use a source checkout if you need to inspect or modify the server locally.
+
+```bash
+git clone https://github.com/CarbonCopyInc/polymarket-mcp.git
+cd polymarket-mcp
+npm install
+npm run build
+node dist/index.js
+```
+
+For local development, you can also run:
+
+```bash
+npm run dev
+```
+
+Use `npm run dev` for iteration and `polymarket-mcp` or `npx -y polymarket-mcp` for normal client installs.
 
 ## Next steps
 
