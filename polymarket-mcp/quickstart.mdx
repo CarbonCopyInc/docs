@@ -1,0 +1,119 @@
+---
+title: "Polymarket MCP Quickstart"
+description: "Run polymarket-mcp locally, connect with MCP stdio, and configure runtime/auth environment variables."
+---
+
+## Overview
+
+This quickstart covers:
+
+1. installing and building `polymarket-mcp`
+2. running the MCP stdio server
+3. wiring a client connection
+4. configuring required vs optional environment variables
+
+## 1) Install and build
+
+Today, `polymarket-mcp` is consumed from source (not a published npm package).
+
+```bash
+git clone https://github.com/CarbonCopyInc/polymarket-mcp.git
+cd polymarket-mcp
+npm install
+npm run build
+```
+
+The MCP entrypoint is `dist/index.js` after build.
+
+## 2) Run the server (stdio)
+
+```bash
+node dist/index.js
+```
+
+The process speaks MCP over stdio. Your MCP client launches this command and manages the connection.
+
+## 3) MCP client connection basics
+
+Any MCP client that supports local stdio servers can connect. Use your local clone path.
+
+```json
+{
+  "mcpServers": {
+    "polymarket": {
+      "command": "node",
+      "args": ["/absolute/path/to/polymarket-mcp/dist/index.js"],
+      "env": {
+        "POLYMARKET_CHAIN_ID": "137"
+      }
+    }
+  }
+}
+```
+
+If your client supports project-local binaries, this also works:
+
+```json
+{
+  "mcpServers": {
+    "polymarket": {
+      "command": "npm",
+      "args": ["run", "dev", "--silent"],
+      "cwd": "/absolute/path/to/polymarket-mcp"
+    }
+  }
+}
+```
+
+Use `npm run dev` only for local development. Use `node dist/index.js` in stable environments.
+
+## 4) Environment variables
+
+`polymarket-mcp` can run with no secrets for public discovery tools. Add auth variables only for account/trading/user-specific features.
+
+### Required for basic startup
+
+- None.
+
+### Common runtime variables (optional)
+
+| Variable | Default | Notes |
+|---|---|---|
+| `POLYMARKET_CHAIN_ID` | `137` | Supports `137` (Polygon) and `80002` (Amoy). |
+| `POLYMARKET_SIGNATURE_TYPE` | `0` (`EOA`) | Accepts `EOA`, `POLY_PROXY`, `POLY_GNOSIS_SAFE`, or `0/1/2`. |
+| `POLYMARKET_RPC_URL` | none | Optional RPC override. |
+| `POLYMARKET_CLOB_URL` | `https://clob.polymarket.com` | CLOB REST base URL. |
+| `POLYMARKET_GAMMA_URL` | `https://gamma-api.polymarket.com` | Gamma REST base URL. |
+| `POLYMARKET_BRIDGE_URL` | `https://bridge.polymarket.com` | Bridge REST base URL. |
+| `POLYMARKET_RELAYER_URL` | `https://relayer-v2.polymarket.com` | Relayer base URL. |
+| `POLYMARKET_RELAYER_TX_TYPE` | none | Optional relayer tx type override. |
+
+### Auth variables (optional, feature-gated)
+
+| Capability area | Variables |
+|---|---|
+| L1 signer readiness | `POLYMARKET_PRIVATE_KEY` (alias: `PRIVATE_KEY`) |
+| L2 API auth readiness | `POLYMARKET_API_KEY`, `POLYMARKET_API_SECRET`, `POLYMARKET_API_PASSPHRASE` |
+| Builder-relayer readiness | `POLYMARKET_BUILDER_API_KEY`, `POLYMARKET_BUILDER_API_SECRET`, `POLYMARKET_BUILDER_API_PASSPHRASE` |
+| Optional extras | `POLYMARKET_ADDRESS`, `POLYMARKET_FUNDER` (aliases: `FUNDER_ADDRESS`, `POLYMARKET_FUNDER_ADDRESS`), `POLYMARKET_BUILDER_AUTH_HEADER`, `POLYMARKET_GEOBLOCK_TOKEN`, `POLYMARKET_USER_AGENT` |
+
+<Note>
+  If auth credentials are missing, public tools still work. Auth-dependent tools may return errors or structured "skipped" diagnostics depending on the flow.
+</Note>
+
+## 5) Minimal smoke check
+
+After connecting in your MCP client, call these in order:
+
+1. `health_check`
+2. `list_sampling_simplified_markets`
+3. `search` with `{ "q": "election", "limit": 5 }`
+4. `read_resource` for `polymarket://status` (if your client supports resource reads)
+
+This verifies stdio transport, public tool access, and runtime status visibility.
+
+## Next steps
+
+- [Polymarket MCP Overview](/polymarket-mcp/overview)
+- [Capabilities Reference](/polymarket-mcp/capabilities-reference)
+- [Workflow: Market Analysis](/polymarket-mcp/workflows-market-analysis)
