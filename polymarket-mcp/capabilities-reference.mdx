@@ -7,14 +7,13 @@ description: "Canonical reference for public discovery, batched market data, aut
 
 This page reflects the current canonical MCP surface asserted by the server smoke test on `main`.
 
-A few important shifts from older revisions:
+The server is organized around a smaller set of wrapper-style entry points:
 
-- `list_markets` now uses `view` and `mode` instead of separate simplified/sampling tools.
-- market data is exposed through pluralized batch tools like `get_order_books` and `get_prices`.
-- auth flows are organized around wrappers such as `ensure_api_key`, `prepare_order`, `place_order`, `cancel_orders`, `get_rewards`, and `get_rewards_market_details`.
-- transaction building is unified under `build_transactions`.
-- relayer execution is unified under `relayer_execute`.
-- legacy websocket burst and `generic_http_request` tools are not part of the canonical public docs surface.
+- `list_markets` selects listing shape and retrieval mode with `view` and `mode`
+- market data is exposed through pluralized batch tools like `get_order_books` and `get_prices`
+- auth flows are centered on `ensure_api_key`, `prepare_order`, `place_order`, `cancel_orders`, `get_rewards`, and `get_rewards_market_details`
+- transaction building is unified under `build_transactions`
+- relayer execution is unified under `relayer_execute`
 
 ## 1) Public market discovery
 
@@ -25,16 +24,17 @@ These tools work without credentials.
 | Health check | `health_check` |
 | Market discovery | `list_markets`, `get_market` |
 | Event discovery | `list_events`, `get_event`, `search` |
+| Batched market data | `get_order_books`, `get_prices`, `get_midpoints`, `get_spreads`, `get_last_trade_prices`, `get_price_history` |
 | Trade-event lookup | `get_market_trade_events` |
 | Market metadata | `get_fee_rate_bps`, `get_tick_size`, `get_neg_risk`, `calculate_market_price` |
 
 ### `list_markets`
 
-`list_markets` is the canonical entry point for listings. It accepts:
+`list_markets` is the canonical listing entry point. It accepts:
 
-- `view`: choose the payload shape (`full` vs `simplified` style output)
-- `mode`: choose retrieval mode (`all` vs `sampling`)
-- `next_cursor`: pagination cursor
+- `view` to choose payload shape
+- `mode` to choose listing mode
+- `next_cursor` for pagination
 
 Example:
 
@@ -50,7 +50,7 @@ Example:
 
 ## 2) Batched market data
 
-The server now uses pluralized batch tools instead of older single-item variants.
+Use these tools when you already have one or more `token_id` values and want consistent batch responses.
 
 | Tool | Purpose |
 |---|---|
@@ -76,7 +76,7 @@ Example:
 ```
 
 <Note>
-  `items[].side` is required for side-aware tools like `get_prices`. It can still be included for shape consistency with other batch calls.
+  `items[].side` is required for side-aware tools like `get_prices`. Including `side` in other batched calls is still useful for a uniform workflow shape.
 </Note>
 
 ## 3) Authenticated trading and account wrappers
@@ -89,25 +89,25 @@ These tools require configured Polymarket credentials.
 | Read-only key lifecycle | `create_readonly_api_key`, `get_readonly_api_keys`, `validate_readonly_api_key`, `delete_readonly_api_key` |
 | Account inspection | `get_order`, `get_open_orders`, `get_user_trades`, `get_balance_allowance` |
 | Allowance mutation | `update_balance_allowance` |
-| Prepare without posting | `prepare_order` |
-| Post orders | `place_order` |
-| Cancel orders | `cancel_orders` |
+| Order preparation | `prepare_order` |
+| Order posting | `place_order` |
+| Order cancellation | `cancel_orders` |
 | Rewards | `get_rewards`, `get_rewards_market_details` |
 
 ### `prepare_order`
 
-`prepare_order` signs or prepares an order locally without posting it to the CLOB.
+`prepare_order` prepares or signs an order locally without posting it.
 
 - `kind: "limit"` expects `price` and `size`
 - `kind: "market"` expects `amount`
 
 ### `place_order`
 
-`place_order` is the canonical posting wrapper. It uses `source` to choose the posting path:
+`place_order` is the canonical order-posting wrapper. It uses `source` to select the posting path:
 
-- `source: "draft"` → create-and-post flow from a draft order
-- `source: "signed"` → post one pre-signed order
-- `source: "signed_batch"` → post a batch of pre-signed orders
+- `source: "draft"` for create-and-post from a draft order
+- `source: "signed"` for posting one pre-signed order
+- `source: "signed_batch"` for posting a batch of pre-signed orders
 
 `confirm: true` is required.
 
@@ -123,7 +123,7 @@ These tools require configured Polymarket credentials.
 
 ### `get_rewards`
 
-`get_rewards` uses a `scope` selector instead of older per-endpoint reward tools:
+`get_rewards` uses a `scope` selector:
 
 - `day`
 - `total_day`
@@ -143,7 +143,7 @@ Use `get_rewards_market_details` when you need market-specific reward details fo
 
 ### `build_transactions`
 
-`build_transactions` replaces many older single-purpose tx-builder tools. Pass an `items` array where each item declares a `kind` plus its required fields.
+`build_transactions` is the canonical transaction-builder wrapper. Pass an `items` array where each item declares a `kind` plus its required fields.
 
 Representative `kind` values include:
 
@@ -187,7 +187,7 @@ Use these when transaction lifecycle tracking matters.
 - `relayer_deploy_safe`
 - `relayer_poll_until_state`
 
-`relayer_execute` is the canonical execution wrapper. It accepts:
+`relayer_execute` is the canonical relayer execution wrapper. It accepts:
 
 - `execution_type: "proxy" | "safe" | "manual"`
 - `transactions`
