@@ -1,6 +1,6 @@
 ---
 title: "Workflow: Market Analysis"
-description: "Agent-friendly workflow to analyze a Polymarket market before execution."
+description: "Agent-friendly workflow to analyze a Polymarket market before execution using the canonical MCP surface."
 ---
 
 ## Goal
@@ -24,26 +24,40 @@ Produce a repeatable, machine-friendly market brief before placing a trade:
 ### 1) Pull market and event context
 
 - `get_market` with `condition_id`
-- `get_event` from related event id (if available)
+- `get_event` from the related event id when available
 
-Capture status, outcomes, timing, and any obvious event risk windows.
+Capture status, outcomes, timing, and event risk windows.
 
-### 2) Check price and liquidity state
+### 2) Pull batched market data
 
-- `get_midpoint`
-- `get_spread`
-- `get_last_trade_price`
-- `get_order_book`
+Use the canonical pluralized tools:
+
+- `get_order_books`
+- `get_prices`
+- `get_midpoints`
+- `get_spreads`
+- `get_last_trade_prices`
+
+Example:
+
+```json
+{
+  "tool": "get_prices",
+  "input": {
+    "items": [{ "token_id": "<target_token_id>", "side": "BUY" }]
+  }
+}
+```
 
 Focus on:
 
 - spread regime (tight/normal/wide)
 - visible depth near midpoint
-- recent print vs midpoint divergence
+- last trade versus current best price
 
 ### 3) Estimate execution impact
 
-Run `calculate_market_price` for your intended side and amount.
+Run `calculate_market_price` for the intended side and amount.
 
 ```json
 {
@@ -51,25 +65,30 @@ Run `calculate_market_price` for your intended side and amount.
   "input": {
     "token_id": "<target_token_id>",
     "side": "BUY",
-    "amount": "250",
-    "order_type": "FOK"
+    "amount": "250"
   }
 }
 ```
 
-Use the result to set max slippage and an initial limit price.
+Use the result to set max slippage and a candidate limit price.
 
-### 4) Gather market metadata constraints
+### 4) Gather execution metadata
 
 - `get_fee_rate_bps`
 - `get_tick_size`
 - `get_neg_risk`
 
-These values should flow directly into order validation and execution policy.
+These values should flow directly into downstream order validation and execution policy.
 
-### 5) Return standardized output
+### 5) If execution is approved, hand off to trading wrappers
 
-Have the agent produce a strict structure like:
+- `prepare_order` to locally prepare/sign a draft without posting
+- `place_order` with `confirm: true` only at the final execution step
+- `cancel_orders` if you need an explicit unwind/cancel path
+
+## Suggested output contract
+
+Have the agent return a strict structure like:
 
 ```json
 {
@@ -77,6 +96,7 @@ Have the agent produce a strict structure like:
   "confidence": 0.0,
   "market_state": {
     "status": "active|closed|...",
+    "best_price": 0.0,
     "midpoint": 0.0,
     "spread": 0.0,
     "last_trade": 0.0
@@ -96,19 +116,11 @@ Have the agent produce a strict structure like:
 
 ## Optional: use the built-in prompt
 
-You can bootstrap this workflow by invoking prompt `market-analysis` with:
+You can bootstrap this workflow with prompt `market-analysis` using:
 
 - `condition_id`
 - `horizon`
 - `include_orderbook_depth`
 - `include_recent_trades`
 
-The prompt already encodes the same high-level sequence and expected output shape.
-
-## Execution handoff
-
-If the brief returns `GO`, hand off to trading flows with:
-
-1. explicit limit/size constraints
-2. `confirm: true` only at final execution step
-3. post-trade verification (`get_open_orders`, `get_user_trades`, optional websocket burst)
+The prompt is registered by the server and already encodes the same analysis sequence.
