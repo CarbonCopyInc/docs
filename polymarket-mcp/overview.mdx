@@ -1,70 +1,72 @@
 ---
 title: "Polymarket MCP Overview"
-description: "Production MCP server for Polymarket market data, trading, relayer, bridge, and agent workflows."
+description: "Production MCP server for Polymarket market discovery, trading, relayer, bridge, and agent workflows."
 ---
 
 ## What it is
 
-`polymarket-mcp` is a TypeScript MCP server that exposes Polymarket capabilities over **stdio** for AI agents and MCP clients.
+`@carbon-copy/polymarket-mcp` is a production MCP stdio server for Polymarket.
 
-It combines:
+It exposes a canonical public tool surface for:
 
-- public market discovery and pricing tools
-- authenticated account and trading tools
+- market and event discovery
+- batched price, midpoint, spread, and order book retrieval
+- authenticated account and trading workflows
 - relayer and builder-relayer execution flows
-- bridge and tx-builder utilities
-- websocket burst capture for live data snapshots
-- reusable prompts and resources for structured agent workflows
+- bridge operations and transaction building
+- prompt-driven analysis and runtime resources for agents
+
+The docs in this section track the canonical MCP surface asserted by the server smoke test on `main`.
 
 ## Who it is for
 
 <CardGroup cols={2}>
   <Card title="Agent builders" icon="robot">
-    Build autonomous or human-in-the-loop market workflows with strongly typed MCP tools.
+    Add a stable Polymarket MCP server to Claude, Cursor, or any stdio-compatible MCP client.
   </Card>
   <Card title="Traders" icon="chart-line">
-    Inspect liquidity, prepare orders, and run execution checklists with explicit confirmations for mutating calls.
+    Research markets, prepare orders, and execute with explicit confirmation gates for mutations.
   </Card>
   <Card title="Researchers" icon="magnifying-glass">
-    Pull market/event/search/orderbook data and bounded websocket bursts for repeatable analysis.
+    Pull repeatable market snapshots, historical price series, event metadata, and rewards context.
   </Card>
   <Card title="Integrators" icon="plug">
-    Add Polymarket primitives to existing MCP clients using one local stdio server process.
+    Build higher-level workflows on top of canonical wrappers like `list_markets`, `place_order`, `build_transactions`, and `relayer_execute`.
   </Card>
 </CardGroup>
 
 ## Major capabilities
 
-- **Public discovery:** list/search markets and events, fetch order books, prices, spreads, and trade history.
-- **Authenticated trading/account:** API key management, balances/allowances, order creation/post/cancel, rewards and notifications.
-- **Relayer + builder-relayer:** nonce/payload inspection, transaction execution/deploy, and poll-until-state helpers.
-- **Bridge + transaction builders:** supported assets, deposit/status checks, and EVM transaction payload generation for CTF/neg-risk flows.
-- **Websocket bursts:** bounded collection from market, user, and sports websocket endpoints.
-- **Prompts + resources:** agent-ready prompts (`market-analysis`, `portfolio-review`, `execution-checklist`) and JSON resources (`polymarket://status`, etc.).
+- **Public discovery:** `list_markets`, `get_market`, `list_events`, `get_event`, `search`.
+- **Batched market data:** `get_order_books`, `get_prices`, `get_midpoints`, `get_spreads`, `get_last_trade_prices`, `get_price_history`.
+- **Trading and account:** `ensure_api_key`, `prepare_order`, `place_order`, `cancel_orders`, balances/allowances, and rewards wrappers.
+- **Bridge and transaction building:** supported assets, bridge status/deposit helpers, and unified `build_transactions`.
+- **Relayer flows:** relayer and builder-relayer nonce, payload, execution, deployment, deployed-status, and polling tools.
+- **Agent context surfaces:** prompts `market-analysis`, `portfolio-review`, `execution-checklist`; resources `polymarket://contracts`, `polymarket://status`, `polymarket://endpoints`; resource template `polymarket://markets/{conditionId}`.
 
 ## Safety model and secret handling
 
 <Warning>
-  Keep all credentials in environment variables or a secrets manager. Never paste secrets into prompts or commit them to source control.
+  Keep signer keys and API credentials in environment variables or a secrets manager. Never paste secrets into prompts or commit them to source control.
 </Warning>
 
-The server is designed for agent safety:
+The server is designed for agent-safe execution:
 
-- **Mutation guard:** state-changing tools require `confirm: true`.
-- **HTTP guardrail:** `generic_http_request` only allows approved Polymarket hosts, requires explicit `method`/`path`, blocks auth-sensitive headers, and bounds response size.
-- **Redacted runtime status:** resource `polymarket://status` reports readiness without exposing secret values.
-- **Graceful auth behavior:** some authenticated flows return structured skip diagnostics when required auth vars are absent.
+- **Mutation guard:** state-changing tools require `confirm: true`, including `place_order`, `cancel_orders`, `relayer_execute`, `relayer_deploy_safe`, `builder_relayer_execute`, and `builder_relayer_deploy`.
+- **Split read/write surface:** public discovery works without secrets; authenticated tools stay feature-gated behind the required env vars.
+- **Redacted runtime status:** `polymarket://status` reports auth/runtime readiness without exposing actual secret values.
+- **Wrapper-first design:** canonical wrappers replace older fragmented tools so agents can reason over fewer, more explicit entry points.
 
 ## What to read next
 
 <CardGroup cols={2}>
   <Card title="Quickstart" icon="play" href="/polymarket-mcp/quickstart">
-    Install, run, connect via stdio, and configure env vars.
+    One-command MCP client setup with `npx -y @carbon-copy/polymarket-mcp`.
   </Card>
   <Card title="Capabilities Reference" icon="book" href="/polymarket-mcp/capabilities-reference">
-    Task-oriented map of public/auth/relayer/bridge/websocket/prompt/resource surfaces.
+    Canonical tool groups, wrapper semantics, prompts, and resources.
   </Card>
   <Card title="Workflow: Market Analysis" icon="wand-magic-sparkles" href="/polymarket-mcp/workflows-market-analysis">
-    A practical agent workflow for pre-trade analysis.
+    A practical agent workflow built on the current pluralized market-data tools.
   </Card>
 </CardGroup>

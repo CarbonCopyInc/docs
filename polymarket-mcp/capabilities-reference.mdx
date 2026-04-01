@@ -1,150 +1,230 @@
 ---
 title: "Polymarket MCP Capabilities Reference"
-description: "Task-oriented reference for public discovery, authenticated trading, relayer, bridge, tx-builder, websocket, prompts, and resources."
+description: "Canonical reference for public discovery, batched market data, auth wrappers, bridge, transaction building, relayer flows, prompts, and resources."
 ---
 
-## How to use this reference
+## Canonical tool surface
 
-This page maps the server by workflow area instead of listing every tool alphabetically.
+This page reflects the current canonical MCP surface asserted by the server smoke test on `main`.
 
-- Start with **public discovery** for read-only research.
-- Add **authenticated tools** for account/trading actions.
-- Use **relayer/builder-relayer** and **tx-builder** for execution pipelines.
-- Use **websocket bursts** for bounded live snapshots.
+The server is organized around a smaller set of wrapper-style entry points:
+
+- `list_markets` selects listing shape and retrieval mode with `view` and `mode`
+- market data is exposed through pluralized batch tools like `get_order_books` and `get_prices`
+- auth flows are centered on `ensure_api_key`, `prepare_order`, `place_order`, `cancel_orders`, `get_rewards`, and `get_rewards_market_details`
+- transaction building is unified under `build_transactions`
+- relayer execution is unified under `relayer_execute`
 
 ## 1) Public market discovery
 
-Use these for market/event exploration without credentials.
-
-**Common tasks**
-
-- discover active markets and events
-- inspect token-level order books and spreads
-- estimate execution impact before placing orders
-
-**Core tools**
+These tools work without credentials.
 
 | Task | Tools |
 |---|---|
-| Health/runtime clock | `health_check`, `get_server_time` |
-| Market/event discovery | `list_markets`, `list_simplified_markets`, `list_events`, `get_event`, `search` |
-| Market details | `get_market`, `get_market_trade_events` |
-| Price and liquidity | `get_order_book`, `get_order_books`, `get_price`, `get_prices`, `get_midpoint`, `get_spread`, `get_last_trade_price`, `get_price_history` |
-| Microstructure metadata | `get_fee_rate_bps`, `get_tick_size`, `get_neg_risk`, `calculate_market_price` |
-| Guarded low-level HTTP | `generic_http_request` |
+| Health check | `health_check` |
+| Market discovery | `list_markets`, `get_market` |
+| Event discovery | `list_events`, `get_event`, `search` |
+| Batched market data | `get_order_books`, `get_prices`, `get_midpoints`, `get_spreads`, `get_last_trade_prices`, `get_price_history` |
+| Trade-event lookup | `get_market_trade_events` |
+| Market metadata | `get_fee_rate_bps`, `get_tick_size`, `get_neg_risk`, `calculate_market_price` |
 
-**Example**
+### `list_markets`
+
+`list_markets` is the canonical listing entry point. It accepts:
+
+- `view` to choose payload shape
+- `mode` to choose listing mode
+- `next_cursor` for pagination
+
+Example:
 
 ```json
 {
-  "tool": "calculate_market_price",
+  "tool": "list_markets",
   "input": {
-    "token_id": "1234567890",
-    "side": "BUY",
-    "amount": "500",
-    "order_type": "FOK"
+    "view": "simplified",
+    "mode": "sampling"
   }
 }
 ```
 
-## 2) Authenticated trading and account
+## 2) Batched market data
 
-These require configured Polymarket credentials.
+Use these tools when you already have one or more `token_id` values and want consistent batch responses.
 
-**Common tasks**
+| Tool | Purpose |
+|---|---|
+| `get_order_books` | Level-2 order book snapshots for `items[].token_id` |
+| `get_prices` | Best quotes for `items[].token_id` + `items[].side` |
+| `get_midpoints` | Neutral midpoint values by token |
+| `get_spreads` | Bid/ask spread values by token |
+| `get_last_trade_prices` | Latest trade prices by token |
+| `get_price_history` | Historical pricing series for market/token inputs |
 
-- create/derive/manage API credentials
-- inspect balances, open orders, trades, and rewards
-- create/post/cancel orders safely
+Example:
 
-**Core tools**
+```json
+{
+  "tool": "get_prices",
+  "input": {
+    "items": [
+      { "token_id": "<token_id>", "side": "BUY" },
+      { "token_id": "<token_id>", "side": "SELL" }
+    ]
+  }
+}
+```
+
+<Note>
+  `items[].side` is required for side-aware tools like `get_prices`. Including `side` in other batched calls is still useful for a uniform workflow shape.
+</Note>
+
+## 3) Authenticated trading and account wrappers
+
+These tools require configured Polymarket credentials.
 
 | Task | Tools |
 |---|---|
-| API key lifecycle | `create_api_key`, `derive_api_key`, `create_or_derive_api_key`, `get_api_keys`, `delete_api_key` |
-| Read-only keys | `create_readonly_api_key`, `get_readonly_api_keys`, `validate_readonly_api_key`, `delete_readonly_api_key` |
-| Account activity | `get_open_orders`, `get_order`, `get_user_trades`, `get_builder_trades`, `get_notifications` |
-| Order flow | `create_order`, `create_market_order`, `create_and_post_order`, `create_and_post_market_order`, `post_order`, `post_orders` |
-| Cancellation | `cancel_order`, `cancel_orders`, `cancel_market_orders`, `cancel_all_orders` |
-| Balances/rewards | `get_balance_allowance`, `update_balance_allowance`, `get_current_rewards`, `get_reward_percentages`, `get_earnings_for_day` |
+| L2 key bootstrap | `ensure_api_key`, `get_api_keys`, `delete_api_key` |
+| Read-only key lifecycle | `create_readonly_api_key`, `get_readonly_api_keys`, `validate_readonly_api_key`, `delete_readonly_api_key` |
+| Account inspection | `get_order`, `get_open_orders`, `get_user_trades`, `get_balance_allowance` |
+| Allowance mutation | `update_balance_allowance` |
+| Order preparation | `prepare_order` |
+| Order posting | `place_order` |
+| Order cancellation | `cancel_orders` |
+| Rewards | `get_rewards`, `get_rewards_market_details` |
 
-<Warning>
-  Mutating tools require `confirm: true`. Keep that gate in your agent plans to avoid accidental execution.
-</Warning>
+### `prepare_order`
 
-## 3) Relayer and builder-relayer
+`prepare_order` prepares or signs an order locally without posting it.
 
-Use for Safe/proxy execution flows where transaction lifecycle tracking matters.
+- `kind: "limit"` expects `price` and `size`
+- `kind: "market"` expects `amount`
 
-**Relayer tools**
+### `place_order`
 
-- `relayer_get_relay_address`, `relayer_get_nonce`, `relayer_get_relay_payload`
-- `relayer_execute_proxy_transactions`, `relayer_execute_safe_transactions`, `relayer_execute_manual_transactions`, `relayer_deploy_safe`
-- `relayer_get_transaction`, `relayer_get_transactions`, `relayer_poll_until_state`
+`place_order` is the canonical order-posting wrapper. It uses `source` to select the posting path:
 
-**Builder-relayer tools**
+- `source: "draft"` for create-and-post from a draft order
+- `source: "signed"` for posting one pre-signed order
+- `source: "signed_batch"` for posting a batch of pre-signed orders
 
-- `builder_relayer_get_nonce`, `builder_relayer_get_relay_payload`
-- `builder_relayer_execute`, `builder_relayer_deploy`, `builder_relayer_get_deployed`
-- `builder_relayer_get_transaction`, `builder_relayer_get_transactions`, `builder_relayer_poll_until_state`
+`confirm: true` is required.
 
-## 4) Bridge tools
+### `cancel_orders`
 
-Bridge coverage focuses on asset support and transaction visibility.
+`cancel_orders` is the canonical cancellation wrapper. It uses:
+
+- `mode: "ids"`
+- `mode: "all"`
+- `mode: "market"`
+
+`confirm: true` is required.
+
+### `get_rewards`
+
+`get_rewards` uses a `scope` selector:
+
+- `day`
+- `total_day`
+- `current`
+- `percentages`
+- `user_market_config`
+
+Use `get_rewards_market_details` when you need market-specific reward details for a `condition_id`.
+
+## 4) Bridge and transaction building
+
+### Bridge tools
 
 - `bridge_supported_assets`
 - `bridge_create_deposit_addresses`
 - `bridge_get_transaction_status`
 
-These are useful for onboarding/offboarding USDC or checking bridge pipeline state from agents.
+### `build_transactions`
 
-## 5) Tx-builder and CTF utilities
+`build_transactions` is the canonical transaction-builder wrapper. Pass an `items` array where each item declares a `kind` plus its required fields.
 
-These tools return transaction payloads for downstream signing/execution.
+Representative `kind` values include:
 
-**Transfers and approvals**
+- `erc20_approval`, `erc1155_approval`, `erc20_transfer`, `eth_transfer`
+- `withdraw_on_matic`
+- `split_positions`, `merge_positions`, `redeem_positions`
+- `buy_market_outcome`, `sell_market_outcome`
+- `add_funding`, `remove_funding`
+- `neg_risk_convert_positions`, `neg_risk_redeem_positions`
+- `proxy_wallet_address`, `index_set`, `market_index`
 
-- `build_erc20_approval_tx`, `build_erc1155_approval_tx`
-- `build_erc20_transfer_tx`, `build_eth_transfer_tx`
-- `build_withdraw_on_matic_txs`
+Example:
 
-**Conditional token framework (CTF)**
+```json
+{
+  "tool": "build_transactions",
+  "input": {
+    "items": [
+      {
+        "kind": "erc20_transfer",
+        "token_address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+        "recipient": "0x000000000000000000000000000000000000dEaD",
+        "amount": "1000000"
+      }
+    ]
+  }
+}
+```
 
-- `build_split_position_txs`, `build_merge_positions_txs`, `build_redeem_positions_txs`
-- `build_buy_market_outcome_txs`, `build_sell_market_outcome_txs`
-- `build_add_funding_txs`, `build_remove_funding_txs`
+## 5) Relayer and builder-relayer
 
-**Neg-risk helpers**
+Use these when transaction lifecycle tracking matters.
 
-- `build_neg_risk_convert_positions_tx`, `build_neg_risk_redeem_positions_tx`
-- `get_market_index`, `get_index_set`
-- `get_proxy_wallet_address`
+### Relayer tools
 
-## 6) Websocket bursts
+- `relayer_get_relay_address`
+- `relayer_get_nonce`
+- `relayer_get_relay_payload`
+- `relayer_get_transactions`
+- `relayer_execute`
+- `relayer_deploy_safe`
+- `relayer_poll_until_state`
 
-`polymarket-mcp` does bounded websocket collection instead of open-ended stream forwarding.
+`relayer_execute` is the canonical relayer execution wrapper. It accepts:
 
-- `websocket_market_burst` for market channel snapshots
-- `websocket_user_burst` for authenticated user updates
-- `websocket_sports_burst` for sports channel updates
+- `execution_type: "proxy" | "safe" | "manual"`
+- `transactions`
+- optional `metadata`
+- optional `gas_limit` / `gas_price` for manual mode
+- `confirm: true`
 
-Use duration/message/sample limits to keep responses deterministic and agent-safe.
+### Builder-relayer tools
 
-## 7) Resources and prompts
+- `builder_relayer_get_nonce`
+- `builder_relayer_get_relay_payload`
+- `builder_relayer_get_transactions`
+- `builder_relayer_execute`
+- `builder_relayer_deploy`
+- `builder_relayer_get_deployed`
+- `builder_relayer_poll_until_state`
+
+## 6) Prompts and resources
+
+### Prompts
+
+| Prompt | Purpose |
+|---|---|
+| `market-analysis` | Structured market-analysis workflow |
+| `portfolio-review` | Portfolio and risk review workflow |
+| `execution-checklist` | Pre-trade execution readiness workflow |
 
 ### Resources
 
 | URI | Purpose |
 |---|---|
 | `polymarket://contracts` | Canonical Polygon contract registry |
-| `polymarket://status` | Runtime + auth readiness with redacted secret status |
-| `polymarket://endpoints` | Canonical REST and websocket endpoints |
-| `polymarket://markets/{conditionId}` | Market payload for a specific condition ID |
+| `polymarket://status` | Runtime/auth readiness with redacted secret state |
+| `polymarket://endpoints` | Canonical REST endpoint registry |
 
-### Prompts
+### Resource template
 
-| Prompt | Purpose |
+| URI template | Purpose |
 |---|---|
-| `market-analysis` | Structured pre-trade market analysis workflow |
-| `portfolio-review` | Portfolio/risk review workflow |
-| `execution-checklist` | Pre-trade execution readiness checklist |
+| `polymarket://markets/{conditionId}` | Market payload for a specific Polymarket condition ID |
