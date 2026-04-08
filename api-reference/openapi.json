@@ -1249,7 +1249,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Paginated open positions.",
+            "description": "Open positions snapshot (not cursor-paginated).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1263,15 +1263,6 @@
                           "items": {
                             "$ref": "#/components/schemas/OpenPosition"
                           }
-                        },
-                        "nextCursor": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "hasMore": {
-                          "type": "boolean"
                         }
                       }
                     },
