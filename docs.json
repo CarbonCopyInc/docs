@@ -70,6 +70,34 @@
         ]
       },
       {
+        "tab": "Polymarket MCP",
+        "icon": "chart-network",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "icon": "play",
+            "pages": [
+              "polymarket-mcp/overview",
+              "polymarket-mcp/quickstart"
+            ]
+          },
+          {
+            "group": "Reference",
+            "icon": "book",
+            "pages": [
+              "polymarket-mcp/capabilities-reference"
+            ]
+          },
+          {
+            "group": "Workflows",
+            "icon": "wand-magic-sparkles",
+            "pages": [
+              "polymarket-mcp/workflows-market-analysis"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "API Reference",
         "icon": "square-terminal",
         "groups": [

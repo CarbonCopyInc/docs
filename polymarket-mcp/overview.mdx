@@ -1,0 +1,72 @@
+---
+title: "Polymarket MCP Overview"
+description: "Production MCP server for Polymarket market discovery, trading, relayer, bridge, and agent workflows."
+---
+
+## What it is
+
+`@carbon-copy/polymarket-mcp` is a production MCP stdio server for Polymarket.
+
+It exposes a canonical public tool surface for:
+
+- market and event discovery
+- batched price, midpoint, spread, and order book retrieval
+- authenticated account and trading workflows
+- relayer and builder-relayer execution flows
+- bridge operations and transaction building
+- prompt-driven analysis and runtime resources for agents
+
+The docs in this section track the canonical MCP surface asserted by the server smoke test on `main`.
+
+## Who it is for
+
+<CardGroup cols={2}>
+  <Card title="Agent builders" icon="robot">
+    Add a stable Polymarket MCP server to Claude, Cursor, or any stdio-compatible MCP client.
+  </Card>
+  <Card title="Traders" icon="chart-line">
+    Research markets, prepare orders, and execute with explicit confirmation gates for mutations.
+  </Card>
+  <Card title="Researchers" icon="magnifying-glass">
+    Pull repeatable market snapshots, historical price series, event metadata, and rewards context.
+  </Card>
+  <Card title="Integrators" icon="plug">
+    Build higher-level workflows on top of canonical wrappers like `list_markets`, `place_order`, `build_transactions`, and `relayer_execute`.
+  </Card>
+</CardGroup>
+
+## Major capabilities
+
+- **Public discovery:** `list_markets`, `get_market`, `list_events`, `get_event`, `search`.
+- **Batched market data:** `get_order_books`, `get_prices`, `get_midpoints`, `get_spreads`, `get_last_trade_prices`, `get_price_history`.
+- **Trading and account:** `ensure_api_key`, `prepare_order`, `place_order`, `cancel_orders`, balances/allowances, and rewards wrappers.
+- **Bridge and transaction building:** supported assets, bridge status/deposit helpers, and unified `build_transactions`.
+- **Relayer flows:** relayer and builder-relayer nonce, payload, execution, deployment, deployed-status, and polling tools.
+- **Agent context surfaces:** prompts `market-analysis`, `portfolio-review`, `execution-checklist`; resources `polymarket://contracts`, `polymarket://status`, `polymarket://endpoints`; resource template `polymarket://markets/{conditionId}`.
+
+## Safety model and secret handling
+
+<Warning>
+  Keep signer keys and API credentials in environment variables or a secrets manager. Never paste secrets into prompts or commit them to source control.
+</Warning>
+
+The server is designed for agent-safe execution:
+
+- **Mutation guard:** state-changing tools require `confirm: true`, including `place_order`, `cancel_orders`, `relayer_execute`, `relayer_deploy_safe`, `builder_relayer_execute`, and `builder_relayer_deploy`.
+- **Split read/write surface:** public discovery works without secrets; authenticated tools stay feature-gated behind the required env vars.
+- **Redacted runtime status:** `polymarket://status` reports auth/runtime readiness without exposing actual secret values.
+- **Wrapper-first design:** canonical wrappers replace older fragmented tools so agents can reason over fewer, more explicit entry points.
+
+## What to read next
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="play" href="/polymarket-mcp/quickstart">
+    One-command MCP client setup with `npx -y @carbon-copy/polymarket-mcp`.
+  </Card>
+  <Card title="Capabilities Reference" icon="book" href="/polymarket-mcp/capabilities-reference">
+    Canonical tool groups, wrapper semantics, prompts, and resources.
+  </Card>
+  <Card title="Workflow: Market Analysis" icon="wand-magic-sparkles" href="/polymarket-mcp/workflows-market-analysis">
+    A practical agent workflow built on the current pluralized market-data tools.
+  </Card>
+</CardGroup>
