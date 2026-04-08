@@ -131,12 +131,12 @@
           },
           "realizedPnl": {
             "type": "number",
-            "description": "Realised P&L at this snapshot.",
+            "description": "Realized P&L at this snapshot.",
             "example": 8.00
           },
-          "unrealisedPnl": {
+          "unrealizedPnl": {
             "type": "number",
-            "description": "Unrealised P&L at this snapshot.",
+            "description": "Unrealized P&L at this snapshot.",
             "example": 4.50
           }
         }
@@ -178,45 +178,55 @@
             "description": "Current mark-to-market value of all open positions in USDC.",
             "example": 89.30
           },
-          "unrealisedPnl": {
+          "currentExposure": {
             "type": "number",
-            "description": "Unrealised profit/loss on open positions in USDC.",
+            "description": "Current mark-to-market capital deployed in open positions.",
+            "example": 89.30
+          },
+          "grossVolume": {
+            "type": "number",
+            "description": "Lifetime copied trade notional (turnover) in USDC.",
+            "example": 739.00
+          },
+          "totalVolume": {
+            "type": "number",
+            "description": "Alias of grossVolume for backwards data-model compatibility.",
+            "example": 739.00
+          },
+          "realizedPnl": {
+            "type": "number",
+            "description": "Realized profit/loss in USDC.",
+            "example": -167.00
+          },
+          "unrealizedPnl": {
+            "type": "number",
+            "description": "Unrealized profit/loss on open positions in USDC.",
             "example": 4.10
+          },
+          "totalPnl": {
+            "type": "number",
+            "description": "Total portfolio P&L (realized + unrealized) in USDC.",
+            "example": -162.90
+          },
+          "pnlPercentage": {
+            "type": "number",
+            "description": "Portfolio P&L percentage based on live position initial value.",
+            "example": -12.30
           },
           "totalValue": {
             "type": "number",
             "description": "balance + positionsValue.",
             "example": 334.80
           },
-          "totalPnL": {
-            "type": "number",
-            "description": "Lifetime realised profit/loss in USDC.",
-            "example": 38.20
-          },
-          "totalPnLPercent": {
-            "type": "number",
-            "description": "Lifetime P&L as a percentage of invested capital.",
-            "example": 8.41
-          },
-          "winRate": {
-            "type": "number",
-            "description": "Percentage of resolved copy trades that were profitable.",
-            "example": 62.5
-          },
-          "totalTrades": {
+          "openPositions": {
             "type": "integer",
-            "description": "Total number of copy trades executed.",
-            "example": 48
-          },
-          "activePositions": {
-            "type": "integer",
-            "description": "Number of currently open copy-trade positions.",
+            "description": "Number of currently open live positions.",
             "example": 12
           },
-          "realizedPnl": {
-            "type": "number",
-            "description": "All-time realised profit/loss from closed positions in USDC.",
-            "example": 34.10
+          "tradersFollowing": {
+            "type": "integer",
+            "description": "Number of traders currently followed.",
+            "example": 5
           }
         }
       },
@@ -316,7 +326,7 @@
           },
           "totalProfit": {
             "type": "number",
-            "description": "Lifetime realised profit in USDC.",
+            "description": "Lifetime realized profit in USDC.",
             "example": 4200.0
           },
           "totalVolume": {
@@ -412,7 +422,7 @@
           },
           "realizedPnl": {
             "type": "number",
-            "description": "Total realised P&L from trades copied from this trader.",
+            "description": "Total realized P&L from trades copied from this trader.",
             "example": 24.10
           },
           "totalVolume": {
@@ -441,7 +451,7 @@
           },
           "realizedPnl": {
             "type": "number",
-            "description": "Total realised P&L from trades in this market.",
+            "description": "Total realized P&L from trades in this market.",
             "example": -5.20
           },
           "totalVolume": {
@@ -452,6 +462,100 @@
           "tradeCount": {
             "type": "integer",
             "example": 4
+          }
+        }
+      },
+      "OpenPosition": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "direction",
+          "shares",
+          "avgPrice",
+          "currentPrice",
+          "positionValue",
+          "pnl",
+          "pnlPercentage",
+          "openedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "0x1234abcd..."
+          },
+          "title": {
+            "type": "string",
+            "example": "Will BTC exceed $100k by end of 2025?"
+          },
+          "eventSlug": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "bitcoin-markets"
+          },
+          "marketSlug": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "will-btc-exceed-100k-by-end-of-2025"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "YES",
+              "NO"
+            ]
+          },
+          "shares": {
+            "type": "number",
+            "example": 12.5
+          },
+          "avgPrice": {
+            "type": "number",
+            "description": "Average entry price in cents.",
+            "example": 47
+          },
+          "currentPrice": {
+            "type": "number",
+            "description": "Current mark price in cents.",
+            "example": 52
+          },
+          "positionValue": {
+            "type": "number",
+            "description": "Current position value in USDC.",
+            "example": 6.5
+          },
+          "pnl": {
+            "type": "number",
+            "description": "Current unrealized P&L in USDC.",
+            "example": 0.62
+          },
+          "pnlPercentage": {
+            "type": "number",
+            "description": "Current unrealized P&L percentage.",
+            "example": 9.5
+          },
+          "copiedFromWallet": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "0xAbCd1234..."
+          },
+          "copiedFromName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "sharptrader"
+          },
+          "openedAt": {
+            "type": "integer",
+            "description": "Unix timestamp (ms) when the position was opened.",
+            "example": 1710000000000
           }
         }
       },
@@ -778,7 +882,7 @@
       "get": {
         "operationId": "getPortfolio",
         "summary": "Get portfolio summary",
-        "description": "Returns an aggregated summary of your copy-trading portfolio including live wallet balance, open positions value, unrealised P&L, and lifetime stats.",
+        "description": "Returns an aggregated summary of your copy-trading portfolio including live wallet balance, open positions value, unrealized P&L, and lifetime stats.",
         "tags": [
           "Portfolio"
         ],
@@ -1006,7 +1110,7 @@
       "get": {
         "operationId": "getPnlHistory",
         "summary": "Get P&L time series",
-        "description": "Returns time-series portfolio P&L snapshots (captured every 15 minutes) for charting performance over time. Includes realised and unrealised P&L breakdown.",
+        "description": "Returns time-series portfolio P&L snapshots (captured every 15 minutes) for charting performance over time. Includes realized and unrealized P&L breakdown.",
         "tags": [
           "Portfolio"
         ],
@@ -1084,7 +1188,7 @@
       "get": {
         "operationId": "getPortfolioPositions",
         "summary": "List positions",
-        "description": "Returns a paginated list of copy-trade positions. Use the `status` parameter to filter by open, closed, or all positions.",
+        "description": "Returns live open positions (mark-to-market). `status=closed` currently returns an empty set.",
         "tags": [
           "Portfolio"
         ],
@@ -1105,10 +1209,19 @@
             }
           },
           {
-            "name": "cursor",
+            "name": "since",
             "in": "query",
+            "description": "Unix ms timestamp lower bound for position openedAt.",
             "schema": {
-              "type": "string"
+              "type": "integer"
+            }
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "description": "Unix ms timestamp upper bound for position openedAt.",
+            "schema": {
+              "type": "integer"
             }
           },
           {
@@ -1124,11 +1237,19 @@
               ],
               "default": "open"
             }
+          },
+          {
+            "name": "fresh",
+            "in": "query",
+            "description": "Set to true to bypass cached positions fetch.",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Paginated positions.",
+            "description": "Open positions snapshot (not cursor-paginated).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1140,17 +1261,8 @@
                         "items": {
                           "type": "array",
                           "items": {
-                            "$ref": "#/components/schemas/CopyTrade"
+                            "$ref": "#/components/schemas/OpenPosition"
                           }
-                        },
-                        "nextCursor": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "hasMore": {
-                          "type": "boolean"
                         }
                       }
                     },
@@ -1270,7 +1382,7 @@
       "get": {
         "operationId": "getPnlByTrader",
         "summary": "P&L breakdown by trader",
-        "description": "Returns realised P&L and volume grouped by each copied trader.",
+        "description": "Returns realized P&L and volume grouped by each copied trader.",
         "tags": [
           "Portfolio"
         ],
@@ -1314,7 +1426,7 @@
       "get": {
         "operationId": "getPnlByMarket",
         "summary": "P&L breakdown by market",
-        "description": "Returns realised P&L and volume grouped by each market you have traded.",
+        "description": "Returns realized P&L and volume grouped by each market you have traded.",
         "tags": [
           "Portfolio"
         ],
