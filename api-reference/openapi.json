@@ -129,7 +129,7 @@
             "description": "Total P&L (deposit-normalised) at this snapshot.",
             "example": 12.50
           },
-          "realisedPnl": {
+          "realizedPnl": {
             "type": "number",
             "description": "Realized P&L at this snapshot.",
             "example": 8.00
